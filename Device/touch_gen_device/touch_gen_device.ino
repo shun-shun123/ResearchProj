@@ -52,6 +52,7 @@ void ExecuteCommand(int* command) {
       Rotate(0.0, 0.0, false, 0.0);
     break;
     default:
+    LEDCheck(command[0]);
     Serial.println("=====INVALID COMMAND=====");
   }
   Serial.print("Read command: ");
@@ -140,8 +141,8 @@ void Rotate(float center_x, float center_y, bool isClockWise, float angle) {
 void LEDCheck(int count) {
   for (int i = 0; i < count; i++) {
     digitalWrite(led, HIGH);
-    delay(500);
+    delay(80);
     digitalWrite(led, LOW);
-    delay(500);
+    delay(80);
   }
 }
