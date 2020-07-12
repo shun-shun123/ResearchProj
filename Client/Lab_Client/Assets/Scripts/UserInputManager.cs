@@ -13,6 +13,8 @@ public class UserInputManager : MonoBehaviour
     public static float WIDTH => Screen.width;
     
     public static float HEIGHT => Screen.height;
+
+    private const float FAST_TOUCH_SEC = 0.2f;
     
 
     public struct TouchInfo
@@ -22,10 +24,15 @@ public class UserInputManager : MonoBehaviour
 
         public void SetStartPosition(Vector2 screenPos)
         {
-            screenPos.x /= WIDTH;
-            screenPos.y /= HEIGHT;
-            StartPoint = screenPos;
+            StartPoint = UserInputManager.CalcScreenUv(screenPos);
         }
+    }
+
+    private static Vector2 CalcScreenUv(Vector2 pos)
+    {
+        pos.x /= WIDTH;
+        pos.y /= HEIGHT;
+        return pos;
     }
     
     private void Start()
@@ -35,7 +42,7 @@ public class UserInputManager : MonoBehaviour
             .Subscribe(data =>
             {
                 m_TouchInfo.SetStartPosition(data.position);
-                m_TouchInfo.StartTime = data.clickTime;
+                m_TouchInfo.StartTime = Time.time;
                 Debug.Log($"Touch Start. Point at {m_TouchInfo.StartPoint}");
             });
         
@@ -52,11 +59,27 @@ public class UserInputManager : MonoBehaviour
 
     private void SingleTouch(ObservableEventTrigger trigger)
     {
+        trigger.OnPointerUpAsObservable()
+            .Where(data =>
+            {
+                var screenAspectPoint = new Vector2(data.position.x / WIDTH, data.position.y / HEIGHT);
+                // 条件1: タッチ開始地点から動いていないか
+                bool isNotMoved = Vector2.Distance(screenAspectPoint, m_TouchInfo.StartPoint) <= 0.1f;
+
+                // 条件2: タッチ開始からの経過時間が0.2sec以下か
+                bool isFastTouch = (Time.time - m_TouchInfo.StartTime) <= FAST_TOUCH_SEC;
+
+                return isNotMoved && isFastTouch;
+            })
+            .Subscribe(data =>
+            {
+                // TODO: SingleTouch時の処理
+                Debug.Log($"SingleTouch: {CalcScreenUv(data.position)}");
+            }).AddTo(gameObject);
     }
 
     private void DoubleTouch(ObservableEventTrigger trigger)
     {
-        
     }
 
     private void Hold(ObservableEventTrigger trigger)
