@@ -74,6 +74,8 @@ public class UserInputManager : MonoBehaviour
             .Subscribe(data =>
             {
                 // TODO: SingleTouch時の処理
+                var uv = CalcScreenUv(data.position);
+                StartCoroutine(m_NetworkManager.Command($"1,{uv.x},{uv.y}"));
                 Debug.Log($"SingleTouch: {CalcScreenUv(data.position)}");
             }).AddTo(gameObject);
     }
