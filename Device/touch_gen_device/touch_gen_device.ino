@@ -1,4 +1,5 @@
 int led = 13;
+int constant_led = 10;
 int cmds[10];
 
 
@@ -8,6 +9,7 @@ void setup() {
 }
 
 void loop() {
+  digitalWrite(constant_led, HIGH);
   // Serialポートに何バイトかデータが到着しているかを返す
   if (Serial.available() <= 0) {
     return;

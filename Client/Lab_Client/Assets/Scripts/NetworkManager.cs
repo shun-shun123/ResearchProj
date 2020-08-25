@@ -13,7 +13,7 @@ public class NetworkManager : MonoBehaviour
 #if UNITY_EDITOR
     private const string URL = "http://127.0.0.1:5000";
 #else
-    private const string URL = "http://192.168.10.7:5000";
+    private const string URL = "http://192.168.100.25:5000";
 #endif
     
 
