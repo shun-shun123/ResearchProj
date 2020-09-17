@@ -1,20 +1,14 @@
 int led = 13;
-int left_led = 13;
-int right_led = 8;
-int constant_led = 10;
 int cmds[10];
-int duration = 100;
+int duration = 80;
 
 
 void setup() {
   pinMode(led, OUTPUT);
-  pinMode(left_led, OUTPUT);
-  pinMode(right_led, OUTPUT);
   Serial.begin(9600);
 }
 
 void loop() {
-  digitalWrite(constant_led, HIGH);
   // Serialポートに何バイトかデータが到着しているかを返す
   if (Serial.available() <= 0) {
     return;
@@ -104,10 +98,7 @@ int Split(String data, char delimiter, String *dst) {
 
 void SingleTouch(float pos_x, float pos_y) {
   Serial.println("=====SingleTouch=====");
-  if (pos_x <= 5.0) {
-    LeftCheck(10);
-    RightCheck(10);
-  }
+  LEDCheck(1);
 }
 
 void DoubleTouch(float pos_x, float pos_y, float duration) {
@@ -154,27 +145,5 @@ void LEDCheck(int count) {
     delay(duration);
     digitalWrite(led, LOW);
     delay(duration);
-  }
-}
-
-void LeftCheck(int count) {
-  Serial.println("LeftCheck");
-  for (int i = 0; i < count; i++) {
-    digitalWrite(left_led, HIGH);
-    delay(duration);
-    digitalWrite(left_led, LOW);
-    delay(duration);
-  }
-}
-
-void RightCheck(int count) {
-  Serial.println("RightCheck");
-  for (int i = 0; i < count; i++) {
-    digitalWrite(right_led, HIGH);
-    delay(duration);
-    digitalWrite(right_led, LOW);
-    delay(duration);
-    Serial.println("right_led");
-    Serial.println(right_led);
   }
 }
