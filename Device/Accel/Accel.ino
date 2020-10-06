@@ -9,7 +9,7 @@ void setup() {
 
 void loop() {
   long x, y, z;
-  x = (analogRead(A0) / 1024.0) * 5.0 * 1000;;
+  x = (analogRead(A0) / 1024.0) * 5.0 * 1000;
   y = (analogRead(A1) / 1024.0) * 5.0 * 1000;
   z = (analogRead(A2) / 1024.0) * 5.0 * 1000;
   x = x - offset_voltage;

@@ -1,6 +1,13 @@
 int led = 13;
 int cmds[10];
-int duration = 80;
+int duration = 100;
+
+float xyz[3];
+
+// 地球の重力である1Gの加速度(m/s^2)
+float ms2 = 9.80665;
+// 電源電圧5V時のオフセット電圧(0G=2.5V=2500mv)
+float offset_voltage = 2500.0;
 
 
 void setup() {
@@ -13,6 +20,7 @@ void loop() {
   if (Serial.available() <= 0) {
     return;
   }
+  readXYZ();
   // シリアルポートから入力を受け付ける
   String input = Serial.readString();
 
@@ -53,7 +61,8 @@ void ExecuteCommand(int* command) {
       Rotate(0.0, 0.0, false, 0.0);
     break;
     default:
-    LEDCheck(command[0]);
+    //LEDCheck(command[0]);
+    ConvertIntToBit(command[0]);
     Serial.println("=====INVALID COMMAND=====");
   }
   Serial.print("Read command: ");
@@ -146,4 +155,55 @@ void LEDCheck(int count) {
     digitalWrite(led, LOW);
     delay(duration);
   }
+}
+
+void readXYZ() {
+  long x, y, z;
+  x = (analogRead(A0) / 1024.0) * 5.0 * 1000;
+  y = (analogRead(A1) / 1024.0) * 5.0 * 1000;
+  z = (analogRead(A2) / 1024.0) * 5.0 * 1000;
+  x = x - offset_voltage;
+  y = y - offset_voltage;
+  z = z - offset_voltage;
+  float xg = x / 1000.0;
+  float yg = y / 1000.0;
+  float zg = z / 1000.0;
+  xyz[0] = xg * ms2;
+  xyz[1] = yg * ms2;
+  xyz[2] = zg * ms2;
+  printXYZ();
+}
+
+void printXYZ() {
+  Serial.print("X* ");
+  Serial.print(xyz[0]);
+  Serial.print(" Y: ");
+  Serial.print(xyz[1]);
+  Serial.print(" Z: ");
+  Serial.println(xyz[2]);
+}
+
+void ConvertIntToBit(int data) {
+  // 書き込み開始通知タッチ
+  LEDCheck(1);
+  int current = data;
+  byte bitData[10];
+  Serial.print("data: ");
+  Serial.println(data);
+  for (int i = 0; i < 10; i++) {
+    bitData[i] = current % 2;
+    current /= 2;
+  }
+  for (int i = 0; i < 10; i++) {
+    Serial.print(bitData[i]);
+    if (bitData[i] == 0) {
+      delay(duration);
+      continue;
+    }
+    digitalWrite(led, HIGH);
+    delay(duration / 2);
+    digitalWrite(led, LOW);
+    delay(duration / 2);
+  }
+  Serial.println();
 }
