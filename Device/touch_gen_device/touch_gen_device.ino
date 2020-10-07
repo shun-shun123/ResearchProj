@@ -29,6 +29,7 @@ void loop() {
   
   // コマンドを実行する
   ExecuteCommand(read_cmds);
+//  ConvertIntToBit(int(xyz[0] * 100));
   delay(2000);
 }
 
