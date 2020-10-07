@@ -17,6 +17,11 @@ public class UIManager : MonoBehaviour
         SceneManager.LoadScene("SampleScene");
     }
 
+    public void GoToBitRecieveScene()
+    {
+        SceneManager.LoadScene("BitRecieve");
+    }
+
     public void CountUp()
     {
         _count++;
