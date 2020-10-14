@@ -1,6 +1,7 @@
 int led = 13;
 int cmds[10];
 int duration = 100;
+int testCount = 30;
 
 float xyz[3];
 
@@ -61,6 +62,10 @@ void ExecuteCommand(int* command) {
     case 8:
       Rotate(0.0, 0.0, false, 0.0);
     break;
+    case 1024:
+      for (int i = 100; i >= 10; i -= 10) {
+        RunTest(i);
+      }
     default:
     //LEDCheck(command[0]);
     ConvertIntToBit(command[0]);
@@ -207,4 +212,42 @@ void ConvertIntToBit(int data) {
     delay(duration / 2);
   }
   Serial.println();
+}
+
+void RunTest(int testDuration) {
+  // 0~1023までテスト
+  Serial.print("=====Test Duration(");
+  Serial.print(testDuration);
+  Serial.println(")millisec=====");
+  for (int i = 0; i <=testCount; i++) {
+    int number = i;
+    Serial.print(number);
+    Serial.print(": ");
+    // 書き込み開始タッチ
+    digitalWrite(led, HIGH);
+    delay(testDuration);
+    digitalWrite(led, LOW);
+    delay(testDuration);
+    // 10bitの数値を計算する
+    for (int j = 0; j < 10; j++) {
+      // bit「0」
+      if (number % 2 == 0) {
+        delay(testDuration);
+      } else {
+        // bitbit「1」
+        digitalWrite(led, HIGH);
+        delay(testDuration / 2);
+        digitalWrite(led, LOW);
+        delay(testDuration / 2);
+      }
+      Serial.print(number % 2);
+      if (number <= 1) {
+        number = 0;
+      } else {
+        number /= 2;
+      }
+    }
+    Serial.println();
+    delay(600);
+  }
 }
