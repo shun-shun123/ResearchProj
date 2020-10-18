@@ -22,6 +22,11 @@ public class UIManager : MonoBehaviour
         SceneManager.LoadScene("BitRecieve");
     }
 
+    public void GoToTouchDurationRapidTestScene()
+    {
+        SceneManager.LoadScene("TouchDurationRapidTest");
+    }
+
     public void CountUp()
     {
         _count++;

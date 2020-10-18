@@ -11,4 +11,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TestScene.unity
     guid: eb1d54423cc094b6cb3e14647463b71e
+  - enabled: 1
+    path: Assets/Scenes/BitRecieve.unity
+    guid: 41e4fe90991af304f9094cbc147fdb5d
+  - enabled: 1
+    path: Assets/Scenes/TouchDurationRapidTest.unity
+    guid: 7c30444c6ef014cbc8a9a17f2065a5a0
   m_configObjects: {}
