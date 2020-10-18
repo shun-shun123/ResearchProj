@@ -22,6 +22,8 @@ const int TEST_INT_TO_BIT_DATA = 101;
 const int TEST_LOG_UTIL = 102;
 // 自作ログライブラリlog_utilのパフォーマンス測定
 const int TEST_LOG_UTIL_PERFORMANCE = 103;
+// 整数値からビット変換したものをタッチデータにして生成する
+const int GENERATE_TOUCH_FROM_INT = 104;
 
 float sensorValue;
 
@@ -74,6 +76,14 @@ void ExecuteCommand(int* command) {
       // command[1]: ログ出力回数
       // command[2]: 試行回数
       TestLogPerformance(command[1], command[2]);
+      break;
+     case GENERATE_TOUCH_FROM_INT:
+      // command[0]: コマンド
+      // command[1]: 整数値
+      // command[2]: タッチ間隔(millis)
+      byte bits[10];
+      CopyIntToBitIntoArray(command[1], bits);
+      SendTouchDataFromBits(bits, command[2]);
       break;
     case 1024:
       for (int i = 100; i >= 10; i -= 10) {

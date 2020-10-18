@@ -27,15 +27,25 @@ void Touch(int touchCount, int touchDuration) {
 void GenerateTouchDataFromBits(byte* bitArray, int touchDuration) {
   for (int i = 0; i < 10; i++) {
     // ログに出力するのは「リトルエンディアン」の方がわかりやすいため、変換(リトルエンディアン: 最右ビットが最小値）
-    Serial.print(bitArray[9 - i]);
+    Log(LOG, String(bitArray[9 - i]));
     
     // 「0」ビットはタッチしない
     if (bitArray[i] == 0) {
-      delay(touchDuration);
+      Touch(0, touchDuration);
       continue;
     }
     
     // 「1」ビットならタッチを生成
-    Touch(1, touchDuration / 2);
+    Touch(1, touchDuration);
   }
+}
+
+// 受信側にタッチデータを送信するメソッド
+// bitArray: ビットデータ配列[10]
+// touchDuration: タッチ間隔
+void SendTouchDataFromBits(byte* bitArray, int touchDuration) {
+  // 送信開始タッチ
+  Touch(1, touchDuration);
+  // タッチデータ生成
+  GenerateTouchDataFromBits(bitArray, touchDuration);
 }

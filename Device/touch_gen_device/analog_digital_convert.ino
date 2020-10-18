@@ -3,6 +3,7 @@
  */
 
 
+// int->bit
 // 整数値をbitデータに変換する
 // 最大bit数は10bit
 // [9] ~ [0] の順番
@@ -22,6 +23,7 @@ void CopyIntToBitIntoArray(int data, byte* byteArray) {
   return byteArray;
 }
 
+// bit->int
 // ビットデータを表す[10]の配列を整数値に変換するメソッド
 // bitArray: ビットデータを格納した長さ10の配列(リトルエンディアン: 最右のビットが最小値)
 int ConvertBitToInt(byte* bitArray) {
