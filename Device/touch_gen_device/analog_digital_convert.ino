@@ -35,11 +35,3 @@ int ConvertBitToInt(byte* bitArray) {
   }
   return data;
 }
-
-// リトルエンディアンで格納されたビットデータをログに出力する
-// bitArray: bit配列[10]
-void PrintBitArray(byte* bitArray) {
-  for (int i = 9; i >= 0; i--) {
-    Serial.print(bitArray[i]);
-  }
-}

@@ -59,14 +59,14 @@ void ConvertIntToBitTest(int testCount, bool onlyFailed) {
     // 成功時のログ出力
     if (onlyFailed == false && data == i) {
       Serial.println("TestSuccess: " + String(i) + " == " + String(data));
-      PrintBitArray(bitArray);
+      LogBitArray(LOG, bitArray);
       Serial.println("\n");
     }
     
     // 失敗時のログ出力
     if (data != i) {
       Serial.println("TestFailed: " + String(i) + " != " + String(data));
-      PrintBitArray(bitArray);
+      LogBitArray(LOG, bitArray);
       Serial.println("\n");
     }
   }
@@ -147,4 +147,21 @@ void TestLogPerformance(int testCount, int calcTimes) {
   Serial.println("Log(): " + String(myLogUtil) + "millis");
   // ログモード復帰
   logMode = currentLogMode;
+}
+
+// 整数値をビット変換、さらにタッチデータとして送信する精度をテストするメソッド（Unity必須）
+// testMaxCount: 0~テストする最大値に該当
+// testDuration: タッチ間隔(millis)
+// testWait: 一度データを送信するごとに待機する時間
+void SendTouchDataAccuracyTest(int testMaxCount, int testDuration, int testWait) {
+  byte bits[10];
+  for (int i = 0; i < testMaxCount; i++) {
+    Logln(LOG, "SendData: " + String(i));
+    // 整数値→ビットデータ変換
+    CopyIntToBitIntoArray(i, bits);
+    LogBitArray(LOG, bits);
+    // ビットデータ→タッチデータ変換・送信
+    SendTouchDataFromBits(bits, testDuration);
+    delay(testWait);
+  }
 }

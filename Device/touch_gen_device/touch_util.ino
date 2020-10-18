@@ -25,10 +25,8 @@ void Touch(int touchCount, int touchDuration) {
 // bitArray: ビットデータ配列[10]
 // touchDuration: タッチ間隔(mills)
 void GenerateTouchDataFromBits(byte* bitArray, int touchDuration) {
+  LogBitArray(LOG, bitArray);
   for (int i = 0; i < 10; i++) {
-    // ログに出力するのは「リトルエンディアン」の方がわかりやすいため、変換(リトルエンディアン: 最右ビットが最小値）
-    Log(LOG, String(bitArray[9 - i]));
-    
     // 「0」ビットはタッチしない
     if (bitArray[i] == 0) {
       Touch(0, touchDuration);

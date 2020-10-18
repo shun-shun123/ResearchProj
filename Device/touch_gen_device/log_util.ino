@@ -15,3 +15,14 @@ void Logln(byte mode, String msg) {
     Serial.println(msg);
   }
 }
+
+// リトルエンディアンで格納されたビットデータをログに出力する
+// bitArray: bit配列[10]
+void LogBitArray(byte mode, byte* bitArray) {
+  if (logMode <= mode) {
+    for (int i = 9; i >= 0; i--) {
+      Serial.print(bitArray[i]);
+    }
+    Serial.println();
+  }
+}
