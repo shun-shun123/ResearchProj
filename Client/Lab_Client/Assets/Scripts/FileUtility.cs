@@ -22,6 +22,7 @@ public static class FileUtility
     {
         try
         {
+            CheckDirectory();
             var json = JsonUtility.ToJson(data);
             if (string.IsNullOrEmpty(json))
             {

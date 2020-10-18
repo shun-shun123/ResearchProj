@@ -35,7 +35,7 @@ public class TouchDurationRapidTestManager : MonoBehaviour
                 TestCount = $"タッチ回数: {touchCount}",
                 TestDuration = $"タッチ間隔: {touchDuration}",
                 DetectTouchCount = $"認識タッチ回数: {_currentTouchCount}",
-                Accuracy = $"認識精度: {_currentTouchCount / (float) touchCount * 100.0f}",
+                Accuracy = $"認識精度: {_currentTouchCount / (float) touchCount * 100.0f}%",
             };
             // セーブ
             FileUtility.SaveAsJson(result);
