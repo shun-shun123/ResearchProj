@@ -20,6 +20,8 @@ void CopyIntToBitIntoArray(int data, byte* byteArray) {
       current /= 2;
     }
   }
+  Logln(LOG, "Data: " + String(data));
+  LogBitArray(LOG, byteArray);
   return byteArray;
 }
 
