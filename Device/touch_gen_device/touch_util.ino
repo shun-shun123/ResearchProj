@@ -14,9 +14,9 @@ void Touch(int touchCount, int touchDuration) {
   
   // タッチ生成する場合の処理
   for (int i = 0; i < touchCount; i++) {
-    digitalWrite(led, HIGH);
+    digitalWrite(TOUCH_PIN, HIGH);
     delay(touchDuration);
-    digitalWrite(led, LOW);
+    digitalWrite(TOUCH_PIN, LOW);
     delay(touchDuration);
   }
 }

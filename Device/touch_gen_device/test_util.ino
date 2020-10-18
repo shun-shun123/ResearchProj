@@ -2,55 +2,24 @@
  * 動作テストなどを行う際のメソッドを定義するタブ
  */
 
-
-// タッチ精度テスト用のメソッド
-// 0~testCount までテスト
-void RunTest(int testDuration, int testCount) {
-  Serial.println("=====Test Duration(" + String(testDuration) + ")millisec=====");
-  for (int i = 0; i <= testCount; i++) {
-    int number = i;
-    Serial.print(String(number) + ": ");
-    // 書き込み開始タッチ
-    Touch(1, testDuration);
-    // 10bitの数値を計算する
-    for (int j = 0; j < 10; j++) {
-      // bit「0」
-      if (number % 2 == 0) {
-        delay(testDuration);
-      } else {
-        // bitbit「1」
-        Touch(1, testDuration / 2);
-      }
-      Serial.print(number % 2);
-      if (number <= 1) {
-        number = 0;
-      } else {
-        number /= 2;
-      }
-    }
-    Serial.println();
-    delay(600);
-  }
-}
-
 // タッチの間隔（mills)とタッチ回数を指定してタッチを生成する
 // どれほどの早さまで正確にタッチを検出できるのかのテストに用いる
 // duration: タッチ間隔(mills)
 // touchCount: タッチ生成回数
 void TouchDurationRapidTest(int duration, int touchCount) {
-  Serial.println("=====TouchDurationRapidTest=====");
-  Serial.println("duration: " + String(duration));
-  Serial.println("touchCount: " + String(touchCount));
+  Logln(LOG, "=====TouchDurationRapidTest=====");
+  Logln(LOG, "duration: " + String(duration));
+  Logln(LOG, "touchCount: " + String(touchCount));
   Touch(touchCount, duration);
-  Serial.println("=====TouchDurationRapidTest Finished=====");
+  Logln(LOG, "=====TouchDurationRapidTest Finished=====");
 }
 
 // 整数値⇄ビットデータの変換が正しく動いているかのテスト
 // testCount: 最大数値testCountまで検証する
 // onlyFailed: 失敗時のみログに出力するようにする
 void ConvertIntToBitTest(int testCount, bool onlyFailed) {
-  Serial.println("=====ConvertIntToBitTest=====");
-  Serial.println("testCount: " + String(testCount));
+  Logln(LOG, "=====ConvertIntToBitTest=====");
+  Logln(LOG, "testCount: " + String(testCount));
   byte bitArray[10];
   for (int i = 0; i < testCount; i++) {
     CopyIntToBitIntoArray(i, bitArray);
@@ -58,19 +27,19 @@ void ConvertIntToBitTest(int testCount, bool onlyFailed) {
     
     // 成功時のログ出力
     if (onlyFailed == false && data == i) {
-      Serial.println("TestSuccess: " + String(i) + " == " + String(data));
+      Logln(LOG, "TestSuccess: " + String(i) + " == " + String(data));
       LogBitArray(LOG, bitArray);
-      Serial.println("\n");
+      Logln(LOG, "\n");
     }
     
     // 失敗時のログ出力
     if (data != i) {
-      Serial.println("TestFailed: " + String(i) + " != " + String(data));
+      Logln(ERR, "TestFailed: " + String(i) + " != " + String(data));
       LogBitArray(LOG, bitArray);
-      Serial.println("\n");
+      Logln(ERR, "\n");
     }
   }
-  Serial.println("=====ConvertIntToBitTest Finished=====");
+  Logln(LOG, "=====ConvertIntToBitTest Finished=====");
 }
 
 // log_utilに定義しているログ出力メソッドが正しく動作するかのテスト

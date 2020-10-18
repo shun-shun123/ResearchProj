@@ -37,7 +37,7 @@ void read3AxisAcceleration() {
   xyz[0] = xg * ms2;
   xyz[1] = yg * ms2;
   xyz[2] = zg * ms2;
-  Serial.println("X* " + String(xyz[0]) + " Y: " + String(xyz[1]) + " Z: " + String(xyz[2]));
+  Logln(LOG, "X* " + String(xyz[0]) + " Y: " + String(xyz[1]) + " Z: " + String(xyz[2]));
   
   // X軸加速度をセンサ値として代入する
   sensorValue = xyz[0];

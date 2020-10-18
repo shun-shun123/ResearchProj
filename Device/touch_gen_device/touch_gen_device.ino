@@ -2,10 +2,11 @@
  * メイン処理の記述タブ
  */
 
-int led = 13;
+// タッチを生成するためのリレーにつながったOUT_PIN
+const int TOUCH_PIN = 13;
+
+// シリアルモニタからの入力を受け取る配列
 int cmds[10];
-int duration = 100;
-int testCount = 30;
 
 // ログのフィルタリング
 const byte LOG = 0;
@@ -27,10 +28,11 @@ const int GENERATE_TOUCH_FROM_INT = 104;
 // 整数値をビット変換、さらにタッチデータに変換し送信した時の精度をテストする（Unity必須）
 const int TEST_SEND_TOUCH_DATA = 105;
 
+// センサ値
 float sensorValue;
 
 void setup() {
-  pinMode(led, OUTPUT);
+  pinMode(TOUCH_PIN, OUTPUT);
   Serial.begin(9600);
 }
 
@@ -100,10 +102,6 @@ void ExecuteCommand(int* command) {
       // command[3]: 一回送信ごとの待機時間(millis)
       SendTouchDataAccuracyTest(command[1], command[2], command[3]);
       break;
-    case 1024:
-      for (int i = 100; i >= 10; i -= 10) {
-        RunTest(i, 30);
-      }
     default:
       Logln(ERR, "=====INVALID COMMAND=====");
   }
