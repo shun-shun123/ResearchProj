@@ -553,7 +553,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b85d2f2226624b43bb413a27fbf0036, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  touchDurationInSec: 100
+  touchDurationInSec: 0.03
 --- !u!4 &505537836
 Transform:
   m_ObjectHideFlags: 0
