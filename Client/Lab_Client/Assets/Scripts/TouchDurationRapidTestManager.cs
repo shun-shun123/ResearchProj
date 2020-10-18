@@ -6,8 +6,9 @@ public class TouchDurationRapidTestManager : MonoBehaviour
 {
     [SerializeField] private Text resultText;
     [SerializeField] private bool realTimeLog;
-    [SerializeField, Tooltip("連続でタッチされる回数")] private int touchCount;
+    [SerializeField] private bool isSaveFile;
     [SerializeField, Tooltip("タッチ間隔(millis)")] private float touchDuration;
+    [SerializeField, Tooltip("連続でタッチされる回数")] private int touchCount;
 
     private int _currentTouchCount;
 
@@ -27,16 +28,20 @@ public class TouchDurationRapidTestManager : MonoBehaviour
     /// </summary>
     public void OnClickCountResetButton()
     {
-        var result = new TouchDurationRapidTestResult
+        if (isSaveFile)
         {
-            TestCount = $"タッチ回数: {touchCount}",
-            TestDuration = $"タッチ間隔: {touchDuration}",
-            DetectTouchCount = $"認識タッチ回数: {_currentTouchCount}",
-            Accuracy = $"認識精度: {_currentTouchCount / (float)touchCount * 100.0f}",
-        };
-        // セーブ
-        FileUtility.SaveAsJson(result);
+            var result = new TouchDurationRapidTestResult
+            {
+                TestCount = $"タッチ回数: {touchCount}",
+                TestDuration = $"タッチ間隔: {touchDuration}",
+                DetectTouchCount = $"認識タッチ回数: {_currentTouchCount}",
+                Accuracy = $"認識精度: {_currentTouchCount / (float) touchCount * 100.0f}",
+            };
+            // セーブ
+            FileUtility.SaveAsJson(result);
+        }
         _currentTouchCount = 0;
+        resultText.text = "-----";
     }
 
     private void UpdateResultText()
