@@ -12,7 +12,7 @@ const byte LOG = 0;
 const byte WARN = 1;
 const byte ERR = 2;
 const byte NONE = 3;
-byte logMode= LOG;
+byte logMode= NONE;
 
 // タッチの間隔を徐々に早め、どれだけの精度で読み取り続けられるかのテストコマンド
 const int TEST_TOUCH_DURATION = 100;

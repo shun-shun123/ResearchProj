@@ -1,4 +1,5 @@
 ﻿using Model;
+using UnityEditor;
 using UnityEngine;
 
 public class SendTouchDataAccuracyManager : MonoBehaviour
@@ -49,8 +50,7 @@ public class SendTouchDataAccuracyManager : MonoBehaviour
             _result.MissTouchCount = $"誤認識回数: {_missCount}";
             _result.CorrectTouchCount = $"正認識回数: {_correctCount}";
             _result.Accuracy = $"認識率: {_correctCount / (float) (_correctCount + _missCount) * 100.0f}%";
-            var json = JsonUtility.ToJson(_result);
-            Debug.Log(json);
+            FileUtility.SaveAsJson(_result);
             _currentTestCount = 0;
             _result = new SendTouchDataAccuracyResult();
         }
