@@ -1,15 +1,29 @@
+/*
+ * メイン処理の記述タブ
+ */
+
 int led = 13;
 int cmds[10];
 int duration = 100;
 int testCount = 30;
 
-float xyz[3];
+// ログのフィルタリング
+const byte LOG = 0;
+const byte WARN = 1;
+const byte ERR = 2;
+const byte NONE = 3;
+byte logMode= LOG;
 
-// 地球の重力である1Gの加速度(m/s^2)
-float ms2 = 9.80665;
-// 電源電圧5V時のオフセット電圧(0G=2.5V=2500mv)
-float offset_voltage = 2500.0;
+// タッチの間隔を徐々に早め、どれだけの精度で読み取り続けられるかのテストコマンド
+const int TEST_TOUCH_DURATION = 100;
+// 整数値をビットデータに変換し、正しく変換できているかのテストコマンド
+const int TEST_INT_TO_BIT_DATA = 101;
+// log_utilに定義したログ出力用メソッドと、そのフィルタリングが正しく動作するかのテストコマンド
+const int TEST_LOG_UTIL = 102;
+// 自作ログライブラリlog_utilのパフォーマンス測定
+const int TEST_LOG_UTIL_PERFORMANCE = 103;
 
+float sensorValue;
 
 void setup() {
   pinMode(led, OUTPUT);
@@ -17,11 +31,12 @@ void setup() {
 }
 
 void loop() {
-  // Serialポートに何バイトかデータが到着しているかを返す
+  // Serialポートに何バイトかデータが到着しているかを返すテスト回数
   if (Serial.available() <= 0) {
     return;
   }
-  readXYZ();
+  // センサ読み取り
+  readSensorValue();
   // シリアルポートから入力を受け付ける
   String input = Serial.readString();
 
@@ -30,224 +45,41 @@ void loop() {
   
   // コマンドを実行する
   ExecuteCommand(read_cmds);
-//  ConvertIntToBit(int(xyz[0] * 100));
-  delay(2000);
 }
 
 // int[]に変換されたコマンドを実行する
+// command: コマンド整数値が入った配列へのポインタ
 void ExecuteCommand(int* command) {
+  Logln(LOG, "Read command: " + String(command[0]));
   // CSV形式の一桁目が操作の種類を示す
   switch (command[0]) {
-    case 1:
-      SingleTouch(command[1], command[2]);
-    break;
-    case 2:
-      DoubleTouch(0, 0, 0);
-    break;
-    case 3:
-      Hold(0, 0, 0);
-    break;
-    case 4:
-      PressAndTouch(0, 0);
-    break;
-    case 5:
-      Scroll(0, 0, 0, 0, 0);
-    break;
-    case 6:
-      PinchIn(0, 0, 0, 0);
-    break;
-    case 7:
-      PinchOut(0, 0, 0, 0);
-    break;
-    case 8:
-      Rotate(0.0, 0.0, false, 0.0);
-    break;
+    case TEST_TOUCH_DURATION:
+      // command[0]: コマンド
+      // command[1]: タッチ間隔(mills)
+      // command[2]: タッチ回数
+      TouchDurationRapidTest(command[1], command[2]);
+      break;
+    case TEST_INT_TO_BIT_DATA:
+      // command[0]: コマンド
+      // command[1]: 検証する最大の整数値
+      // command[2]: ログ出力モード(0: 失敗時のみ, それ以外: 全て出力)
+      ConvertIntToBitTest(command[1], command[2] == 0);
+      break;
+    case TEST_LOG_UTIL:
+      // command[0]: コマンド
+      LogModeTest();
+      break;
+    case TEST_LOG_UTIL_PERFORMANCE:
+      // command[0]: コマンド
+      // command[1]: ログ出力回数
+      // command[2]: 試行回数
+      TestLogPerformance(command[1], command[2]);
+      break;
     case 1024:
       for (int i = 100; i >= 10; i -= 10) {
-        RunTest(i);
+        RunTest(i, 30);
       }
     default:
-    //LEDCheck(command[0]);
-    ConvertIntToBit(command[0]);
-    Serial.println("=====INVALID COMMAND=====");
-  }
-  Serial.print("Read command: ");
-  Serial.println(command[0]);
-}
-
-// CSV形式からint[]のコマンド実行形式へと変換する
-int* ReadCommand(String csv) {
-  String splited_csv[10];
-  int index = Split(csv, ',', splited_csv);
-  for (int i = 0; i < index; i++) {
-    cmds[i] = splited_csv[i].toInt();
-  }
-  return cmds;
-}
-
-// 文字列を特定文字で分割するSplit関数
-// data: 元の文字列
-// delimiter: 区切り文字
-// dst: 配列
-// return: 
-int Split(String data, char delimiter, String *dst) {
-  int index = 0;
-  int arraySize = (sizeof(data) / sizeof((data)[0]));
-  int dataLength = data.length();
-  
-  // 全文字探索
-  for (int i = 0; i < dataLength; i++) {
-    char tmp = data.charAt(i);
-    // 現在の文字が区切り文字の場合
-    if (tmp == delimiter) {
-      index++;
-      // 算出したarraySizeより大きい場合はエラー
-      if (index > (arraySize - 1)) return -1;
-    }
-    else {
-      dst[index] += tmp;
-    }
-  }
-  return (index + 1);
-}
-
-void SingleTouch(float pos_x, float pos_y) {
-  Serial.println("=====SingleTouch=====");
-  LEDCheck(1);
-}
-
-void DoubleTouch(float pos_x, float pos_y, float duration) {
-  Serial.println("=====DoubleTouch=====");
-  LEDCheck(2);
-}
-
-void Hold(float pos_x, float pos_y, float duration) {
-  Serial.println("=====Hold=====");
-  LEDCheck(3);
-}
-
-void PressAndTouch(float pos_x, float pos_y) {
-  Serial.println("=====PressAndTouch=====");
-  LEDCheck(4);
-}
-
-void Scroll(float start_x, float start_y, float end_x, float end_y, float duration) {
-  Serial.println("=====Scroll=====");
-  LEDCheck(5);
-}
-
-void PinchIn(float pos_x, float pos_y, float width, float duration) {
-  Serial.println("=====PinchIn=====");
-  LEDCheck(6);
-}
-
-void PinchOut(float pox_x, float pos_y, float width, float duration) {
-  Serial.println("=====PinchOut=====");
-  LEDCheck(7);
-}
-
-void Rotate(float center_x, float center_y, bool isClockWise, float angle) {
-  Serial.println("=====Rotate=====");
-  LEDCheck(8);
-}
-
-// 何かの動作検証をLEDチカチカで行うときの関数
-// count: チカチカ回数
-// duration: 点滅時間
-void LEDCheck(int count) {
-  for (int i = 0; i < count; i++) {
-    digitalWrite(led, HIGH);
-    delay(duration);
-    digitalWrite(led, LOW);
-    delay(duration);
-  }
-}
-
-void readXYZ() {
-  long x, y, z;
-  x = (analogRead(A0) / 1024.0) * 5.0 * 1000;
-  y = (analogRead(A1) / 1024.0) * 5.0 * 1000;
-  z = (analogRead(A2) / 1024.0) * 5.0 * 1000;
-  x = x - offset_voltage;
-  y = y - offset_voltage;
-  z = z - offset_voltage;
-  float xg = x / 1000.0;
-  float yg = y / 1000.0;
-  float zg = z / 1000.0;
-  xyz[0] = xg * ms2;
-  xyz[1] = yg * ms2;
-  xyz[2] = zg * ms2;
-  printXYZ();
-}
-
-void printXYZ() {
-  Serial.print("X* ");
-  Serial.print(xyz[0]);
-  Serial.print(" Y: ");
-  Serial.print(xyz[1]);
-  Serial.print(" Z: ");
-  Serial.println(xyz[2]);
-}
-
-void ConvertIntToBit(int data) {
-  // 書き込み開始通知タッチ
-  LEDCheck(1);
-  int current = data;
-  byte bitData[10];
-  Serial.print("data: ");
-  Serial.println(data);
-  for (int i = 0; i < 10; i++) {
-    bitData[i] = current % 2;
-    current /= 2;
-  }
-  for (int i = 0; i < 10; i++) {
-    Serial.print(bitData[i]);
-    if (bitData[i] == 0) {
-      delay(duration);
-      continue;
-    }
-    digitalWrite(led, HIGH);
-    delay(duration / 2);
-    digitalWrite(led, LOW);
-    delay(duration / 2);
-  }
-  Serial.println();
-}
-
-void RunTest(int testDuration) {
-  // 0~1023までテスト
-  Serial.print("=====Test Duration(");
-  Serial.print(testDuration);
-  Serial.println(")millisec=====");
-  for (int i = 0; i <=testCount; i++) {
-    int number = i;
-    Serial.print(number);
-    Serial.print(": ");
-    // 書き込み開始タッチ
-    digitalWrite(led, HIGH);
-    delay(testDuration);
-    digitalWrite(led, LOW);
-    delay(testDuration);
-    // 10bitの数値を計算する
-    for (int j = 0; j < 10; j++) {
-      // bit「0」
-      if (number % 2 == 0) {
-        delay(testDuration);
-      } else {
-        // bitbit「1」
-        digitalWrite(led, HIGH);
-        delay(testDuration / 2);
-        digitalWrite(led, LOW);
-        delay(testDuration / 2);
-      }
-      Serial.print(number % 2);
-      if (number <= 1) {
-        number = 0;
-      } else {
-        number /= 2;
-      }
-    }
-    Serial.println();
-    delay(600);
+      Logln(ERR, "=====INVALID COMMAND=====");
   }
 }
