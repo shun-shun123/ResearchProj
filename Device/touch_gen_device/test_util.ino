@@ -134,3 +134,20 @@ void SendTouchDataAccuracyTest(int testMaxCount, int testDuration, int testWait)
     delay(testWait);
   }
 }
+
+// 整数値をビット変換、さらにホールドデータとして送信する制度をテストするメソッド（Unity必須）
+// testMaxCoun: 0~テストする最大値に該当
+// testDuration: ホールド時間(millis)
+// testWait: 一度データを送信するごとに待機する時間
+void SendHoldDataAccuracyTest(int testMaxCount, int testDuration, int testWait) {
+  byte bits[10];
+  for (int i = 0; i < testMaxCount; i++) {
+    Logln(LOG, "SendData: " + String(i));
+    // 整数値→ビットデータ変換
+    CopyIntToBitIntoArray(i, bits);
+    LogBitArray(LOG, bits);
+    // ビットデータ→ホールドデータ変換・送信
+    SendHoldDataFromBits(bits, testDuration);
+    delay(testWait);
+  }
+}

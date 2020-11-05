@@ -3,7 +3,7 @@
  */
 
 // タッチを生成するためのリレーにつながったOUT_PIN
-const int TOUCH_PIN = 13;
+const int TOUCH_PIN = 9;
 
 // シリアルモニタからの入力を受け取る配列
 int cmds[10];
@@ -13,7 +13,7 @@ const byte LOG = 0;
 const byte WARN = 1;
 const byte ERR = 2;
 const byte NONE = 3;
-byte logMode= NONE;
+byte logMode= LOG;
 
 // タッチの間隔を徐々に早め、どれだけの精度で読み取り続けられるかのテストコマンド
 const int TEST_TOUCH_DURATION = 100;
@@ -27,6 +27,10 @@ const int TEST_LOG_UTIL_PERFORMANCE = 103;
 const int GENERATE_TOUCH_FROM_INT = 104;
 // 整数値をビット変換、さらにタッチデータに変換し送信した時の精度をテストする（Unity必須）
 const int TEST_SEND_TOUCH_DATA = 105;
+// 整数値からビット変換したものをホールドデータにして生成する
+const int GENERATE_HOLD_FROM_INT = 106;
+// 整数値をビット変換、さらにホールドデータに変換し送信した時の精度をテストする（Unity必須）
+const int TEST_SEND_HOLD_DATA = 107;
 
 // センサ値
 float sensorValue;
@@ -101,6 +105,22 @@ void ExecuteCommand(int* command) {
       // command[2]: タッチ間隔(millis)
       // command[3]: 一回送信ごとの待機時間(millis)
       SendTouchDataAccuracyTest(command[1], command[2], command[3]);
+      break;
+    // 106: 整数値からビット変換したものをホールドデータにして生成する
+    case GENERATE_HOLD_FROM_INT:
+      // command[0]: コマンド
+      // command[1]: 整数値
+      // command[2]: ホールド時間(millis)
+      byte holdBits[10];
+      CopyIntToBitIntoArray(command[1], holdBits);
+      GenerateHoldDataFromBits(holdBits, command[2]);
+      break;
+    case TEST_SEND_HOLD_DATA:
+      // command[0]: コマンド
+      // command[1]: テスト最大値
+      // command[2]: ホールド間隔(millis)
+      // command[3]: 一回送信ごとに待機時間(millis)
+      SendHoldDataAccuracyTest(command[1], command[2], command[3]);
       break;
     default:
       Logln(ERR, "=====INVALID COMMAND=====");
