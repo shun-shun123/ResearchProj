@@ -11,7 +11,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     [SerializeField] private int bitDataLength;
 
     [Header("Test Dynamic Parameters")] 
-    [SerializeField] private float holdDuration;
+    [SerializeField] private float holdDurationInSec;
     [SerializeField] private float testMaxCount;
 
     private int[] _bitData;
@@ -74,7 +74,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         _isDataReceiving = true;
         for (var i = 0; i < _bitData.Length; i++)
         {
-            yield return new WaitForSeconds(holdDuration);
+            yield return new WaitForSeconds(holdDurationInSec);
             _bitData[i] = _isPressing ? 1 : 0;
         }
         _isDataReceiving = false;
