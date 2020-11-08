@@ -87,14 +87,14 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     /// </summary>
     private IEnumerator DataReceivingCoroutine()
     {
+        // データ送信開始タッチの後holdDurationInSec分待機時間が発生するためそれを待つ
+        yield return new WaitForSeconds(holdDurationInSec);
         _isDataReceiving = true;
         _sendStartTime = Time.realtimeSinceStartup;
-        float timer = 0f;
-        float limit = holdDurationInSec * _bitData.Length + deviceDelayAdjustInSec;
-        while (timer < limit)
+        for (var i = 0; i < _bitData.Length; i++)
         {
-            timer += Time.deltaTime;
-            yield return null;
+            yield return new WaitForSeconds(holdDurationInSec + deviceDelayAdjustInSec);
+            _bitData[i] = _isPressing ? 1 : 0;
         }
         _isDataReceiving = false;
         LogBitToInt();
