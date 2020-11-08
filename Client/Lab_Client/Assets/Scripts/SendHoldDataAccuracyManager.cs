@@ -66,14 +66,14 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         if (_isDataReceiving)
         {
             _isPressing = true;
-            lastPressDownTime = Time.time;
+            lastPressDownTime = Time.realtimeSinceStartup;
         }
     }
 
     private void OnPointerUp(PointerEventData data)
     {
         _isPressing = false;
-        sb.Append($"OnPointerUp. HoldDuration: {Time.time - lastPressDownTime}\nStartTime: {Time.time - sendStartTime}\n");
+        sb.Append($"OnPointerUp. HoldDuration: {Time.realtimeSinceStartup - lastPressDownTime}\nStartTime: {Time.realtimeSinceStartup - sendStartTime}\n");
     }
 
     /// <summary>
@@ -84,7 +84,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     {
         Debug.Log("Data Receiving Start.");
         _isDataReceiving = true;
-        sendStartTime = Time.time;
+        sendStartTime = Time.realtimeSinceStartup;
         for (var i = 0; i < _bitData.Length; i++)
         {
             yield return new WaitForSeconds(holdDurationInSec + deviceDelayAdjustInSec);
