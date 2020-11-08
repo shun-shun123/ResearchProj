@@ -70,12 +70,13 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
                     _isPressing = true;
                     _isBitHigh = true;
                     _lastPressDownTime = Time.realtimeSinceStartup;
+                    Debug.Log($"_lastPressDownTime: {Time.realtimeSinceStartup}");
                 }
             } else if (touch.phase == TouchPhase.Ended)
             {
                 _isBitHigh = false;
                 _isPressing = false;
-                _sb.Append($"=====OnPointerUp======\nHoldStartTime: {Time.realtimeSinceStartup - _sendStartTime}\nHoldDuration: {Time.realtimeSinceStartup - _lastPressDownTime}\n");
+                _sb.Append($"=====OnPointerUp======\nTime.realtimeSinceStartup: {Time.realtimeSinceStartup}\nHoldStartTime: {Time.realtimeSinceStartup - _sendStartTime}\nHoldDuration: {Time.realtimeSinceStartup - _lastPressDownTime}\n");
             }
         }
     }
