@@ -38,6 +38,8 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
 
     private float lastPressDownTime;
 
+    private float timer = 0f;
+
     private void Start()
     {
         _bitData = new int[bitDataLength];
@@ -69,21 +71,25 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
             return;
         }
 
-        if (Input.touchCount == 0)
+        if (Input.touchCount > 0)
         {
-            return;
-        }
-
-        var touch = Input.GetTouch(0);
-        if (touch.phase == TouchPhase.Began)
-        {
-            _isPressing = true;
-            lastPressDownTime = Time.realtimeSinceStartup;
-        }
-        else if (touch.phase == TouchPhase.Ended)
-        {
-            _isPressing = false;
-            sb.Append($"OnPointerUp. HoldDuration: {Time.realtimeSinceStartup - lastPressDownTime}\nStartTime: {Time.realtimeSinceStartup - sendStartTime}\n");
+            var touch = Input.GetTouch(0);
+            switch (touch.phase)
+            {
+                case TouchPhase.Began:
+                    _isPressing = true;
+                    lastPressDownTime = Time.realtimeSinceStartup;
+                    timer = 0f;
+                    break;
+                case TouchPhase.Moved:
+                case TouchPhase.Stationary:
+                    timer += Time.deltaTime;
+                    break;
+                case TouchPhase.Ended:
+                    _isPressing = false;
+                    sb.Append($"OnPointerUp. HoldDuration: {Time.realtimeSinceStartup - lastPressDownTime}\nStartTime: {Time.realtimeSinceStartup - sendStartTime}\nTime: {timer}");
+                    break;
+            }
         }
     }
 
