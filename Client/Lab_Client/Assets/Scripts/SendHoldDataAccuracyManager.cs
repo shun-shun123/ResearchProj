@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -61,22 +62,50 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         StartCoroutine(_dataReceivingCoroutine);
     }
 
-    private void OnPointerDown(PointerEventData data)
+    private void Update()
     {
-        if (_isDataReceiving)
+        if (_isDataReceiving == false)
+        {
+            return;
+        }
+
+        if (Input.touchCount == 0)
+        {
+            return;
+        }
+
+        var touch = Input.GetTouch(0);
+        if (touch.phase == TouchPhase.Began)
         {
             _isPressing = true;
             lastPressDownTime = Time.realtimeSinceStartup;
-        }
-    }
-
-    private void OnPointerUp(PointerEventData data)
-    {
-        if (_isDataReceiving)
+        } else if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
+        {
+            _isPressing = true;
+        } 
+        else if (touch.phase == TouchPhase.Ended)
         {
             _isPressing = false;
             sb.Append($"OnPointerUp. HoldDuration: {Time.realtimeSinceStartup - lastPressDownTime}\nStartTime: {Time.realtimeSinceStartup - sendStartTime}\n");
         }
+    }
+
+    private void OnPointerDown(PointerEventData data)
+    {
+        // if (_isDataReceiving)
+        // {
+        //     _isPressing = true;
+        //     lastPressDownTime = Time.realtimeSinceStartup;
+        // }
+    }
+
+    private void OnPointerUp(PointerEventData data)
+    {
+        // if (_isDataReceiving)
+        // {
+        //     _isPressing = false;
+        //     sb.Append($"OnPointerUp. HoldDuration: {Time.realtimeSinceStartup - lastPressDownTime}\nStartTime: {Time.realtimeSinceStartup - sendStartTime}\n");
+        // }
     }
 
     /// <summary>
@@ -85,10 +114,9 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     /// </summary>
     private IEnumerator DataReceivingCoroutine()
     {
-        Debug.Log("Data Receiving Start.");
-        _isDataReceiving = true;
         // データ送信開始タッチの後holdDurationInSec分待機時間が発生するためそれを待つ
-        yield return new WaitForSeconds(holdDurationInSec + deviceDelayAdjustInSec);
+        yield return new WaitForSeconds(holdDurationInSec);
+        _isDataReceiving = true;
         sendStartTime = Time.realtimeSinceStartup;
         for (var i = 0; i < _bitData.Length; i++)
         {
@@ -96,7 +124,6 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
             _bitData[i] = _isPressing ? 1 : 0;
         }
         _isDataReceiving = false;
-        Debug.Log("Data Receiving Stop.");
         LogBitToInt();
         Debug.Log(sb.ToString());
         sb.Clear();
