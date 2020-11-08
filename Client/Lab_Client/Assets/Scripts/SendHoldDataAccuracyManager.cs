@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -32,13 +31,13 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     /// </summary>
     private bool _isDataReceiving;
 
-    private StringBuilder sb = new StringBuilder();
+    private readonly StringBuilder _sb = new StringBuilder();
 
-    private float sendStartTime;
+    private float _sendStartTime;
 
-    private float lastPressDownTime;
+    private float _lastPressDownTime;
 
-    private float timer = 0f;
+    private float _timer = 0f;
 
     private void Start()
     {
@@ -78,16 +77,16 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
             {
                 case TouchPhase.Began:
                     _isPressing = true;
-                    lastPressDownTime = Time.realtimeSinceStartup;
-                    timer = 0f;
+                    _lastPressDownTime = Time.realtimeSinceStartup;
+                    _timer = 0f;
                     break;
                 case TouchPhase.Moved:
                 case TouchPhase.Stationary:
-                    timer += Time.deltaTime;
+                    _timer += Time.deltaTime;
                     break;
                 case TouchPhase.Ended:
                     _isPressing = false;
-                    sb.Append($"OnPointerUp. HoldDuration: {Time.realtimeSinceStartup - lastPressDownTime}\nStartTime: {Time.realtimeSinceStartup - sendStartTime}\nTime: {timer}");
+                    _sb.Append($"=====OnPointerUp======\nHoldDuration: {Time.realtimeSinceStartup - _lastPressDownTime}\nStartTime: {Time.realtimeSinceStartup - _sendStartTime}\nTime: {_timer}\n");
                     break;
             }
         }
@@ -120,7 +119,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         // データ送信開始タッチの後holdDurationInSec分待機時間が発生するためそれを待つ
         yield return new WaitForSeconds(holdDurationInSec);
         _isDataReceiving = true;
-        sendStartTime = Time.realtimeSinceStartup;
+        _sendStartTime = Time.realtimeSinceStartup;
         for (var i = 0; i < _bitData.Length; i++)
         {
             yield return new WaitForSeconds(holdDurationInSec + deviceDelayAdjustInSec);
@@ -128,8 +127,8 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         }
         _isDataReceiving = false;
         LogBitToInt();
-        Debug.Log(sb.ToString());
-        sb.Clear();
+        Debug.Log(_sb.ToString());
+        _sb.Clear();
     }
 
     private void LogBitToInt()
