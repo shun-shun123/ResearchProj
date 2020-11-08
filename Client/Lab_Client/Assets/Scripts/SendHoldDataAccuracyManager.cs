@@ -105,10 +105,12 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     private void LogBitToInt()
     {
         int num = 0;
+        string hoge = "";
         for (var i = 0; i < _bitData.Length; i++)
         {
             num += _bitData[i] << i;
+            hoge += _bitData[i].ToString();
         }
-        Debug.Log($"num: {num}");
+        Debug.Log($"num: {num}\n{hoge}");
     }
 }
