@@ -39,6 +39,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     {
         if (_isDataReceiving)
         {
+            Debug.Log("Data receiving... not working");
             return;
         }
 
@@ -56,12 +57,14 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     {
         if (_isDataReceiving)
         {
+            Debug.Log("_isPressed On");
             _isPressing = true;
         }
     }
 
     private void OnPointerUp(PointerEventData data)
     {
+        Debug.Log("_isPressed Off");
         _isPressing = false;
     }
 
@@ -71,6 +74,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     /// </summary>
     private IEnumerator DataReceivingCoroutine()
     {
+        Debug.Log("Data Receiving Start.");
         _isDataReceiving = true;
         for (var i = 0; i < _bitData.Length; i++)
         {
@@ -78,6 +82,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
             _bitData[i] = _isPressing ? 1 : 0;
         }
         _isDataReceiving = false;
+        Debug.Log("Data Receiving Stop.");
         LogBitToInt();
     }
 
@@ -88,6 +93,6 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         {
             num += _bitData[i] << i;
         }
-        Debug.Log(num);
+        Debug.Log($"num: {num}");
     }
 }

@@ -113,7 +113,7 @@ void ExecuteCommand(int* command) {
       // command[2]: ホールド時間(millis)
       byte holdBits[10];
       CopyIntToBitIntoArray(command[1], holdBits);
-      GenerateHoldDataFromBits(holdBits, command[2]);
+      SendHoldDataFromBits(holdBits, command[2]);
       break;
     // 107: 整数値をビット変換、さらにホールドデータに変換し送信した時の精度をテストする（Unity必須）
     case TEST_SEND_HOLD_DATA:
