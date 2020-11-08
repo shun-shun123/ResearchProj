@@ -75,8 +75,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         if (_isDataReceiving)
         {
             _isPressing = false;
-            sb.Append(
-                $"OnPointerUp. HoldDuration: {Time.realtimeSinceStartup - lastPressDownTime}\nStartTime: {Time.realtimeSinceStartup - sendStartTime}\n");
+            sb.Append($"OnPointerUp. HoldDuration: {Time.realtimeSinceStartup - lastPressDownTime}\nStartTime: {Time.realtimeSinceStartup - sendStartTime}\n");
         }
     }
 
