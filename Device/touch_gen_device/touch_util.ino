@@ -32,7 +32,7 @@ void Hold(int bitData, int holdDuration) {
     digitalWrite(TOUCH_PIN, HIGH);
     delay(holdDuration);
   } else {
-    Logln(LOG, "bitDataが0,1以外で来ています");
+    Logln(ERR, "bitが0,1以外で来ています: " + String(bitData));
   }
 }
 
@@ -58,7 +58,6 @@ void GenerateTouchDataFromBits(byte* bitArray, int touchDuration) {
 // bitArray: ビットデータ配列[10]
 // holdDuration: ホールド時間(millis)
 void GenerateHoldDataFromBits(byte* bitArray, int holdDuration) {
-  LogBitArray(LOG, bitArray);
   for (int i = 0; i < 10; i++) {
     Hold(bitArray[i], holdDuration);
   }
