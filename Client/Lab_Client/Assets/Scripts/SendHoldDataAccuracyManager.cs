@@ -70,6 +70,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
                 if (_isBitHigh == false)
                 {
                     _isPressing = true;
+                    _isBitHigh = true;
                     _lastPressDownTime = Time.realtimeSinceStartup;
                 }
             } else if (touch.phase == TouchPhase.Ended)
