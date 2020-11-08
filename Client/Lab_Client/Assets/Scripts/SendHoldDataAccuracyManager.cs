@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -29,6 +30,8 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     /// データの受信中フラグ
     /// </summary>
     private bool _isDataReceiving;
+
+    private StringBuilder sb = new StringBuilder();
 
     private void Start()
     {
@@ -61,6 +64,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         {
             Debug.Log("_isPressed On");
             _isPressing = true;
+            sb.Append($"OnPointerDown at {Time.time}\n");
         }
     }
 
@@ -68,6 +72,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     {
         Debug.Log("_isPressed Off");
         _isPressing = false;
+        sb.Append($"OnPointerUp at {Time.time}\n");
     }
 
     /// <summary>
@@ -86,6 +91,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         _isDataReceiving = false;
         Debug.Log("Data Receiving Stop.");
         LogBitToInt();
+        Debug.Log(sb.ToString());
     }
 
     private void LogBitToInt()
