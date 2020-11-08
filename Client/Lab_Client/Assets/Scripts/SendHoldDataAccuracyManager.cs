@@ -48,7 +48,6 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     {
         if (_isDataReceiving)
         {
-            Debug.Log("Data receiving... not working");
             return;
         }
 
@@ -66,7 +65,6 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     {
         if (_isDataReceiving)
         {
-            Debug.Log("_isPressed On");
             _isPressing = true;
             lastPressDownTime = Time.time;
         }
@@ -74,9 +72,8 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
 
     private void OnPointerUp(PointerEventData data)
     {
-        Debug.Log("_isPressed Off");
         _isPressing = false;
-        sb.Append($"OnPointerUp. HoldDuration: {Time.time - lastPressDownTime}\nStartTime: {Time.time - sendStartTime}");
+        sb.Append($"OnPointerUp. HoldDuration: {Time.time - lastPressDownTime}\nStartTime: {Time.time - sendStartTime}\n");
     }
 
     /// <summary>
