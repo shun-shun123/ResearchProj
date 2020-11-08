@@ -48,7 +48,6 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         {
             return;
         }
-
         StartCoroutine(DataReceivingCoroutine());
     }
 
@@ -58,7 +57,6 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         {
             return;
         }
-        Debug.Log($"Delta: {Time.deltaTime}");
 
         if (Input.touchCount > 0)
         {
@@ -92,10 +90,12 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         yield return new WaitForSeconds(holdDurationInSec);
         _isDataReceiving = true;
         _sendStartTime = Time.realtimeSinceStartup;
-        for (var i = 0; i < _bitData.Length; i++)
+        float timer = 0f;
+        float limit = holdDurationInSec * _bitData.Length + deviceDelayAdjustInSec;
+        while (timer < limit)
         {
-            yield return new WaitForSeconds(holdDurationInSec + deviceDelayAdjustInSec);
-            _bitData[i] = _isPressing ? 1 : 0;
+            timer += Time.deltaTime;
+            yield return null;
         }
         _isDataReceiving = false;
         LogBitToInt();
