@@ -13,6 +13,8 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     [Header("Test Dynamic Parameters")] 
     [SerializeField] private float holdDurationInSec;
     [SerializeField] private float testMaxCount;
+    [Tooltip("デバイスの処理速度によって発生する微妙な遅延を調整するための値")]
+    [SerializeField] private float deviceDelayAdjustInSec;
 
     private int[] _bitData;
 
@@ -78,7 +80,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         _isDataReceiving = true;
         for (var i = 0; i < _bitData.Length; i++)
         {
-            yield return new WaitForSeconds(holdDurationInSec);
+            yield return new WaitForSeconds(holdDurationInSec + deviceDelayAdjustInSec);
             _bitData[i] = _isPressing ? 1 : 0;
         }
         _isDataReceiving = false;
