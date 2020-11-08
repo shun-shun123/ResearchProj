@@ -94,6 +94,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         Debug.Log("Data Receiving Stop.");
         LogBitToInt();
         Debug.Log(sb.ToString());
+        sb.Clear();
     }
 
     private void LogBitToInt()
