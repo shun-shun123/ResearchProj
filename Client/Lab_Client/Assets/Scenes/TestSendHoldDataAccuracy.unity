@@ -522,6 +522,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bitDataLength: 10
+  vSyncCount: 0
+  targetFrameRate: 9999
   holdDurationInSec: 0.02
   testMaxCount: 0
   deviceDelayAdjustInSec: 0

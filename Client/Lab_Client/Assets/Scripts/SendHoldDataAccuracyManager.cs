@@ -7,6 +7,10 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     [Header("Test Static Parameters")]
     [Tooltip("送信するビットデータの長さ")]
     [SerializeField] private int bitDataLength;
+    [Tooltip("VSyncCount: 0の場合ディスプレイの垂直同期とは独立した更新になる")]
+    [SerializeField] private int vSyncCount;
+    [Tooltip("TargetFrameRate: 十分に高い値を設定すると良い")]
+    [SerializeField] private int targetFrameRate;
 
     [Header("Test Dynamic Parameters")] 
     [SerializeField] private float holdDurationInSec;
@@ -17,11 +21,6 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     private int[] _bitData;
 
     private bool _isPressing;
-
-    /// <summary>
-    /// データ受付中に走るコルーチンのキャッシュ
-    /// </summary>
-    private IEnumerator _dataReceivingCoroutine;
 
     /// <summary>
     /// データの受信中フラグ
@@ -39,6 +38,8 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     private void Start()
     {
         _bitData = new int[bitDataLength];
+        QualitySettings.vSyncCount = vSyncCount;
+        Application.targetFrameRate = targetFrameRate;
     }
 
     public void OnClickReceivingButton()
@@ -48,14 +49,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
             return;
         }
 
-        if (_dataReceivingCoroutine != null)
-        {
-            StopCoroutine(_dataReceivingCoroutine);
-            _dataReceivingCoroutine = null;
-        }
-
-        _dataReceivingCoroutine = DataReceivingCoroutine();
-        StartCoroutine(_dataReceivingCoroutine);
+        StartCoroutine(DataReceivingCoroutine());
     }
 
     private void Update()
@@ -64,6 +58,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         {
             return;
         }
+        Debug.Log($"Delta: {Time.deltaTime}");
 
         if (Input.touchCount > 0)
         {
@@ -94,7 +89,13 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     {
         _isDataReceiving = true;
         _sendStartTime = Time.realtimeSinceStartup;
-        yield return new WaitForSeconds(holdDurationInSec * _bitData.Length + deviceDelayAdjustInSec);
+        float timer = 0f;
+        float limit = holdDurationInSec * _bitData.Length + deviceDelayAdjustInSec;
+        while (timer < limit)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
         _isDataReceiving = false;
         LogBitToInt();
         Debug.Log(_sb.ToString());
