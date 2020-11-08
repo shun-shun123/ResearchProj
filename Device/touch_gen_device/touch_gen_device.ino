@@ -115,6 +115,7 @@ void ExecuteCommand(int* command) {
       CopyIntToBitIntoArray(command[1], holdBits);
       GenerateHoldDataFromBits(holdBits, command[2]);
       break;
+    // 107: 整数値をビット変換、さらにホールドデータに変換し送信した時の精度をテストする（Unity必須）
     case TEST_SEND_HOLD_DATA:
       // command[0]: コマンド
       // command[1]: テスト最大値
