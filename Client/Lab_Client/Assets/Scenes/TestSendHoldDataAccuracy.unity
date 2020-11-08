@@ -536,9 +536,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   holdEventReceiver: {fileID: 30995434}
   bitDataLength: 10
-  holdDurationInSec: 0.6
+  holdDurationInSec: 0.06
   testMaxCount: 0
-  deviceDelayAdjustInSec: 0.05
+  deviceDelayAdjustInSec: 0.005
 --- !u!1 &2059296740
 GameObject:
   m_ObjectHideFlags: 0
