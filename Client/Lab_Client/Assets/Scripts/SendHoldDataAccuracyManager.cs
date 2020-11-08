@@ -109,7 +109,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         for (var i = 0; i < _bitData.Length; i++)
         {
             num += _bitData[i] << i;
-            hoge += _bitData[i].ToString();
+            hoge = _bitData[i] + hoge;
         }
         Debug.Log($"num: {num}\n{hoge}");
     }
