@@ -536,7 +536,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   holdEventReceiver: {fileID: 30995434}
   bitDataLength: 10
-  holdDurationInSec: 0.06
+  holdDurationInSec: 0.02
   testMaxCount: 0
   deviceDelayAdjustInSec: 0
 --- !u!1 &2059296740
