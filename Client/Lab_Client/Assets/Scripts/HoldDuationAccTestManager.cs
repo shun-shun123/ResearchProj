@@ -39,6 +39,7 @@ public class HoldDuationAccTestManager : MonoBehaviour
             return;
         }
         _holdDuration += Time.fixedDeltaTime;
+        Debug.Log($"_holdDuration: {_holdDuration} (fixedDeltaTime: {Time.fixedDeltaTime})");
     }
 
 
@@ -46,11 +47,13 @@ public class HoldDuationAccTestManager : MonoBehaviour
     {
         _holdDuration = 0f;
         fixedLock = false;
+        Debug.Log("OnPointerDown...");
     }
 
     private void OnPointerUp(PointerEventData data)
     {
         fixedLock = true;
+        Debug.Log($"OnPointerUp: _holdDuration: {_holdDuration}");
         _totalDiff += holdDuration - _holdDuration;
         _diffRecords.Add(holdDuration - _holdDuration);
         _testCount++;
