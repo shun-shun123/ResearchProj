@@ -25,15 +25,20 @@ void Touch(int touchCount, int touchDuration) {
 // bitData: 0 or 1
 // holdDuration: ホールドし続ける時間　（ms）
 void Hold(int bitData, int holdDuration) {
+  unsigned long now = millis();
+  Logln(LOG, "Now: " + String(now));
   if (bitData == 0) {
     digitalWrite(TOUCH_PIN, LOW);
-    delay(holdDuration);
+    CustomDelayInMs(holdDuration);
   } else if (bitData == 1) {
     digitalWrite(TOUCH_PIN, HIGH);
-    delay(holdDuration);
+    CustomDelayInMs(holdDuration);
   } else {
     Logln(ERR, "bitが0,1以外で来ています: " + String(bitData));
   }
+  Logln(LOG, "DelayTime: " + String(holdDuration));
+  Logln(LOG, "RealDelayTime: " + String(millis() - now));
+  Logln(LOG, "millis(): " + String(millis()));
 }
 
 
@@ -81,4 +86,9 @@ void SendHoldDataFromBits(byte* bitArray, int holdDuration) {
   Touch(1, holdDuration);
   // ホールドデータ送信
   GenerateHoldDataFromBits(bitArray, holdDuration);
+}
+
+void CustomDelayInMs(int ms) {
+  unsigned long time_start = millis();
+  while (millis() - time_start < ms) {}
 }

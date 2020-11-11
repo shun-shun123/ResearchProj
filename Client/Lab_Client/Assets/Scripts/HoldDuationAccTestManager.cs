@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -21,7 +22,7 @@ public class HoldDuationAccTestManager : MonoBehaviour
     private int _testCount;
 
     private float _totalDiff;
-    
+
     private void Start()
     {
         _diffRecords = new List<float>(testMaxCount);
@@ -29,17 +30,21 @@ public class HoldDuationAccTestManager : MonoBehaviour
         holdEventReceiver.OnPointerUpAction = OnPointerUp;
     }
 
+    private void FixedUpdate()
+    {
+        _holdDuration += Time.fixedDeltaTime;
+    }
+
 
     private void OnPointerDown(PointerEventData data)
     {
-        _holdDuration = Time.realtimeSinceStartup;
+        _holdDuration = 0f;
     }
 
     private void OnPointerUp(PointerEventData data)
     {
-        var diff = Time.realtimeSinceStartup - _holdDuration;
-        _totalDiff += holdDuration - diff;
-        _diffRecords.Add(holdDuration - diff);
+        _totalDiff += holdDuration - _holdDuration;
+        _diffRecords.Add(holdDuration - _holdDuration);
         _testCount++;
         if (_testCount >= testMaxCount)
         {
