@@ -540,6 +540,7 @@ MonoBehaviour:
   holdDurationInSec: 0.02
   testMaxCount: 0
   deviceDelayAdjustInSec: 0
+  holdEventReceiver: {fileID: 30995434}
 --- !u!1 &2059296740
 GameObject:
   m_ObjectHideFlags: 0
