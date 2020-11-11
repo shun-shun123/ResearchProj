@@ -27,10 +27,12 @@ const int TEST_LOG_UTIL_PERFORMANCE = 103;
 const int GENERATE_TOUCH_FROM_INT = 104;
 // 整数値をビット変換、さらにタッチデータに変換し送信した時の精度をテストする（Unity必須）
 const int TEST_SEND_TOUCH_DATA = 105;
+// ホールドの時間間隔に誤差が生じていないかテストする
+const int TEST_HOLD_DURATION_ACC = 106;
 // 整数値からビット変換したものをホールドデータにして生成する
-const int GENERATE_HOLD_FROM_INT = 106;
+const int GENERATE_HOLD_FROM_INT = 107;
 // 整数値をビット変換、さらにホールドデータに変換し送信した時の精度をテストする（Unity必須）
-const int TEST_SEND_HOLD_DATA = 107;
+const int TEST_SEND_HOLD_DATA = 108;
 
 // センサ値
 float sensorValue;
@@ -106,7 +108,14 @@ void ExecuteCommand(int* command) {
       // command[3]: 一回送信ごとの待機時間(millis)
       SendTouchDataAccuracyTest(command[1], command[2], command[3]);
       break;
-    // 106: 整数値からビット変換したものをホールドデータにして生成する
+    // 106: ホールドの時間間隔に誤差が生じていないかテストする
+    case TEST_HOLD_DURATION_ACC:
+      // command[0]: コマンド
+      // command[1]: テスト回数
+      // command[2]: ホールド間隔(ms)
+      TestHoldDurationAcc(command[1], command[2]);
+      break;
+    // 107: 整数値からビット変換したものをホールドデータにして生成する
     case GENERATE_HOLD_FROM_INT:
       // command[0]: コマンド
       // command[1]: 整数値
@@ -115,7 +124,7 @@ void ExecuteCommand(int* command) {
       CopyIntToBitIntoArray(command[1], holdBits);
       SendHoldDataFromBits(holdBits, command[2]);
       break;
-    // 107: 整数値をビット変換、さらにホールドデータに変換し送信した時の精度をテストする（Unity必須）
+    // 108: 整数値をビット変換、さらにホールドデータに変換し送信した時の精度をテストする（Unity必須）
     case TEST_SEND_HOLD_DATA:
       // command[0]: コマンド
       // command[1]: テスト最大値
