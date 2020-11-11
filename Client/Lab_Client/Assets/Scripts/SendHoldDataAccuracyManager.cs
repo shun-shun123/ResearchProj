@@ -52,11 +52,13 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
 
     private void OnPointerDown(PointerEventData data)
     {
+        Debug.Log("OnPointerDown");
         _isPressing = true;
     }
 
     private void OnPointerUp(PointerEventData data)
     {
+        Debug.Log("OnPointerUp");
         _isPressing = false;
     }
 
