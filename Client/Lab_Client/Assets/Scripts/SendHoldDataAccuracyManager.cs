@@ -20,6 +20,8 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     [SerializeField] private bool needsLog;
     [Tooltip("閾値検知のための幅")]
     [SerializeField] private float threshold;
+    [Tooltip("デバイス遅延")]
+    [SerializeField] private float deviceDelay;
 
     [SerializeField]
     private HoldEventReceiver holdEventReceiver;
@@ -38,7 +40,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     private bool fixedLock;
 
     private int index;
-    
+
     private void Start()
     {
         _bitData = new int[bitDataLength];
@@ -66,8 +68,8 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         }
         fixedTimer += Time.fixedDeltaTime;
         // 入力開始想定時間 + (入力受付時間 / 4) ~ 入力終了想定時間 - (入力受付時間 / 4f)の間で入力値をチェックする
-        if (holdDurationInSec * (index + 1) + threshold <= fixedTimer &&
-            fixedTimer <= holdDurationInSec * (index + 2) - threshold && 
+        if (holdDurationInSec * (index + 1) + threshold + (index * deviceDelay) <= fixedTimer &&
+            fixedTimer <= holdDurationInSec * (index + 2) - threshold + (index * deviceDelay) && 
             index < bitDataLength)
         {
             _bitData[index] = _isPressing ? 1 : 0;
@@ -96,7 +98,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         _isDataReceiving = true;
         fixedLock = false;
         yield return new WaitForSeconds(holdDurationInSec);
-        yield return new WaitForSeconds(holdDurationInSec * bitDataLength);
+        yield return new WaitForSeconds(holdDurationInSec * bitDataLength + deviceDelay * bitDataLength);
         _isDataReceiving = false;
         fixedLock = true;
         fixedTimer = 0f;
