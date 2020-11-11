@@ -69,8 +69,6 @@ public class HoldDuationAccTestManager : MonoBehaviour
             Debug.Log(GetAllLog());
             ResetAll();
         }
-
-        fixedLock = false;
     }
 
     private string GetAllLog()
