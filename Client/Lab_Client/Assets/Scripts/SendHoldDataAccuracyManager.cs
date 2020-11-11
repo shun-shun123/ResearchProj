@@ -46,6 +46,8 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
 
     private int successCount;
 
+    private bool isEnterDetectRange;
+
     private void Start()
     {
         _bitData = new int[bitDataLength];
@@ -77,8 +79,11 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
             fixedTimer <= holdDurationInSec * (index + 2) - threshold + (index * deviceDelay) && 
             index < bitDataLength)
         {
-            _bitData[index] = _isPressing ? 1 : 0;
+            isEnterDetectRange = true;
             Log($"FixedTime: {fixedTimer} bit: {_isPressing}");
+        } else if (isEnterDetectRange)
+        {
+            _bitData[index] = _isPressing ? 1 : 0;
             index++;
         }
     }
