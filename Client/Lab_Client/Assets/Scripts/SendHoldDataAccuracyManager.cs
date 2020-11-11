@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Text;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class SendHoldDataAccuracyManager : MonoBehaviour
 {
@@ -18,6 +19,9 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     [Tooltip("デバイスの処理速度によって発生する微妙な遅延を調整するための値")]
     [SerializeField] private float deviceDelayAdjustInSec;
 
+    [SerializeField]
+    private HoldEventReceiver holdEventReceiver;
+    
     private int[] _bitData;
 
     private bool _isPressing;
@@ -26,20 +30,15 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     /// データの受信中フラグ
     /// </summary>
     private bool _isDataReceiving;
-
-    private readonly StringBuilder _sb = new StringBuilder();
-
-    private float _sendStartTime;
-
-    private float _lastPressDownTime;
-
-    private bool _isBitHigh;
-
+    
     private void Start()
     {
         _bitData = new int[bitDataLength];
         QualitySettings.vSyncCount = vSyncCount;
         Application.targetFrameRate = targetFrameRate;
+
+        holdEventReceiver.OnPointerDownAction = OnPointerDown;
+        holdEventReceiver.OnPointerUpAction = OnPointerUp;
     }
 
     public void OnClickReceivingButton()
@@ -51,34 +50,14 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         StartCoroutine(DataReceivingCoroutine());
     }
 
-    private void Update()
+    private void OnPointerDown(PointerEventData data)
     {
-        if (_isDataReceiving == false)
-        {
-            return;
-        }
+        _isPressing = true;
+    }
 
-        if (Input.touchCount > 0)
-        {
-            var touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Began || 
-                touch.phase == TouchPhase.Moved ||
-                touch.phase == TouchPhase.Stationary)
-            {
-                if (_isBitHigh == false)
-                {
-                    _isPressing = true;
-                    _isBitHigh = true;
-                    _lastPressDownTime = Time.realtimeSinceStartup;
-                    Debug.Log($"_lastPressDownTime: {Time.realtimeSinceStartup}");
-                }
-            } else if (touch.phase == TouchPhase.Ended)
-            {
-                _isBitHigh = false;
-                _isPressing = false;
-                _sb.Append($"=====OnPointerUp======\nTime.realtimeSinceStartup: {Time.realtimeSinceStartup}\nHoldStartTime: {Time.realtimeSinceStartup - _sendStartTime}\nHoldDuration: {Time.realtimeSinceStartup - _lastPressDownTime}\n");
-            }
-        }
+    private void OnPointerUp(PointerEventData data)
+    {
+        _isPressing = false;
     }
 
     /// <summary>
@@ -90,29 +69,22 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         // データ送信開始タッチの後holdDurationInSec分待機時間が発生するためそれを待つ
         _isDataReceiving = true;
         yield return new WaitForSeconds(holdDurationInSec);
-        _sendStartTime = Time.realtimeSinceStartup;
-        float timer = 0f;
-        float limit = holdDurationInSec * _bitData.Length + deviceDelayAdjustInSec;
-        while (timer < limit)
+        for (var i = 0; i < bitDataLength; i++)
         {
-            timer += Time.deltaTime;
-            yield return null;
+            yield return new WaitForSeconds(holdDurationInSec);
+            _bitData[i] = _isPressing ? 1 : 0;
         }
         _isDataReceiving = false;
         LogBitToInt();
-        Debug.Log(_sb.ToString());
-        _sb.Clear();
     }
 
     private void LogBitToInt()
     {
         int num = 0;
-        string hoge = "";
         for (var i = 0; i < _bitData.Length; i++)
         {
             num += _bitData[i] << i;
-            hoge = _bitData[i] + hoge;
         }
-        Debug.Log($"num: {num}\n{hoge}");
+        Debug.Log($"num: {num}");
     }
 }
