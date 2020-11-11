@@ -55,7 +55,7 @@ public class HoldDuationAccTestManager : MonoBehaviour
         StringBuilder sb =new StringBuilder();
         for (var i = 0; i < _diffRecords.Count; i++)
         {
-            sb.Append($"{i}: {_diffRecords[i]}\n");
+            sb.Append($"{i}: {_diffRecords[i] * 1000.0f}(ms)\n");
         }
 
         return sb.ToString();
