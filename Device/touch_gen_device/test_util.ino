@@ -157,6 +157,6 @@ void SendHoldDataAccuracyTest(int testMaxCount, int testDuration, int testWait) 
 void TestHoldDurationAcc(int textMaxCount, int testDuration) {
   for (int i = 0; i < textMaxCount; i++) {
     Hold(1, testDuration);
-    Hold(0, 50);  // 確実にタッチ離れを検知する時間間隔を設定しておく
+    Hold(0, 100);  // 確実にタッチ離れを検知する時間間隔を設定しておく
   }
 }

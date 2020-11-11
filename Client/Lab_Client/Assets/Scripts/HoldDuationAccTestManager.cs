@@ -23,6 +23,8 @@ public class HoldDuationAccTestManager : MonoBehaviour
 
     private float _totalDiff;
 
+    private bool fixedLock = true;
+
     private void Start()
     {
         _diffRecords = new List<float>(testMaxCount);
@@ -32,6 +34,10 @@ public class HoldDuationAccTestManager : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (fixedLock)
+        {
+            return;
+        }
         _holdDuration += Time.fixedDeltaTime;
     }
 
@@ -39,10 +45,12 @@ public class HoldDuationAccTestManager : MonoBehaviour
     private void OnPointerDown(PointerEventData data)
     {
         _holdDuration = 0f;
+        fixedLock = false;
     }
 
     private void OnPointerUp(PointerEventData data)
     {
+        fixedLock = true;
         _totalDiff += holdDuration - _holdDuration;
         _diffRecords.Add(holdDuration - _holdDuration);
         _testCount++;
@@ -53,6 +61,8 @@ public class HoldDuationAccTestManager : MonoBehaviour
             Debug.Log(GetAllLog());
             ResetAll();
         }
+
+        fixedLock = false;
     }
 
     private string GetAllLog()
