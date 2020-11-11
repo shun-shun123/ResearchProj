@@ -22,6 +22,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     [SerializeField] private float threshold;
     [Tooltip("デバイス遅延")]
     [SerializeField] private float deviceDelay;
+    [SerializeField] private bool isTestMode;
 
     [SerializeField]
     private HoldEventReceiver holdEventReceiver;
@@ -40,6 +41,10 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     private bool fixedLock;
 
     private int index;
+
+    private int testCount;
+
+    private int successCount;
 
     private void Start()
     {
@@ -104,15 +109,36 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         fixedTimer = 0f;
         index = 0;
         LogBitToInt();
+        if (isTestMode)
+        {
+            int read = BitToInt(_bitData);
+            successCount += read == testCount ? 1 : 0;
+            testCount++;
+            if (testCount >= testMaxCount)
+            {
+                Debug.Log($"Success: {successCount}");
+                Debug.Log($"TestCount: {testCount}");
+                Debug.Log($"ACC: {successCount / (float)testCount}");
+                testCount = 0;
+                successCount = 0;
+            }
+        }
+    }
+
+    private int BitToInt(int[] bits)
+    {
+        int num = 0;
+        for (var i = 0; i < bits.Length; i++)
+        {
+            num += bits[i] << i;
+        }
+
+        return num;
     }
 
     private void LogBitToInt()
     {
-        int num = 0;
-        for (var i = 0; i < _bitData.Length; i++)
-        {
-            num += _bitData[i] << i;
-        }
+        int num = BitToInt(_bitData);
         Debug.Log($"num: {num}");
     }
 
