@@ -65,8 +65,9 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
             return;
         }
         fixedTimer += Time.fixedDeltaTime;
-        if (holdDurationInSec * (index + 1) <= fixedTimer &&
-            fixedTimer <= holdDurationInSec * (index + 1) + threshold && 
+        // 入力開始想定時間 + (入力受付時間 / 4) ~ 入力終了想定時間 - (入力受付時間 / 4f)の間で入力値をチェックする
+        if (holdDurationInSec * (index + 1) + holdDurationInSec / 4f <= fixedTimer &&
+            fixedTimer <= holdDurationInSec * (index + 2) - holdDurationInSec / 4f && 
             index < bitDataLength)
         {
             _bitData[index] = _isPressing ? 1 : 0;
