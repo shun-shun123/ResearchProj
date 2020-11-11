@@ -85,6 +85,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         {
             _bitData[index] = _isPressing ? 1 : 0;
             index++;
+            isEnterDetectRange = false;
         }
     }
 
