@@ -65,7 +65,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
             return;
         }
         fixedTimer += Time.fixedDeltaTime;
-        if (holdDurationInSec * (index + 1) - threshold <= fixedTimer &&
+        if (holdDurationInSec * (index + 1) <= fixedTimer &&
             fixedTimer <= holdDurationInSec * (index + 1) + threshold && 
             index < bitDataLength)
         {
