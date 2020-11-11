@@ -25,8 +25,6 @@ void Touch(int touchCount, int touchDuration) {
 // bitData: 0 or 1
 // holdDuration: ホールドし続ける時間　（ms）
 void Hold(int bitData, int holdDuration) {
-  unsigned long now = millis();
-  Logln(LOG, "Now: " + String(now));
   if (bitData == 0) {
     digitalWrite(TOUCH_PIN, LOW);
     CustomDelayInMs(holdDuration);
@@ -36,9 +34,6 @@ void Hold(int bitData, int holdDuration) {
   } else {
     Logln(ERR, "bitが0,1以外で来ています: " + String(bitData));
   }
-  Logln(LOG, "DelayTime: " + String(holdDuration));
-  Logln(LOG, "RealDelayTime: " + String(millis() - now));
-  Logln(LOG, "millis(): " + String(millis()));
 }
 
 

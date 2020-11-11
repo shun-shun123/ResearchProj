@@ -15,6 +15,9 @@ public class HoldDuationAccTestManager : MonoBehaviour
     [SerializeField]
     private HoldEventReceiver holdEventReceiver;
 
+    [SerializeField]
+    private bool needsLog;
+
     private float _holdDuration;
 
     private List<float> _diffRecords;
@@ -39,7 +42,8 @@ public class HoldDuationAccTestManager : MonoBehaviour
             return;
         }
         _holdDuration += Time.fixedDeltaTime;
-        Debug.Log($"_holdDuration: {_holdDuration} (fixedDeltaTime: {Time.fixedDeltaTime})");
+        Log($"_holdDuration: {_holdDuration} (fixedDeltaTime: {Time.fixedDeltaTime})");
+        Log($"RealTime: {Time.realtimeSinceStartup}");
     }
 
 
@@ -47,13 +51,14 @@ public class HoldDuationAccTestManager : MonoBehaviour
     {
         _holdDuration = 0f;
         fixedLock = false;
-        Debug.Log("OnPointerDown...");
+        Log("OnPointerDown...");
     }
 
     private void OnPointerUp(PointerEventData data)
     {
         fixedLock = true;
-        Debug.Log($"OnPointerUp: _holdDuration: {_holdDuration}");
+        Log($"OnPointerUp: _holdDuration: {_holdDuration}");
+        Log($"RealTime: {Time.realtimeSinceStartup}");
         _totalDiff += holdDuration - _holdDuration;
         _diffRecords.Add(holdDuration - _holdDuration);
         _testCount++;
@@ -84,5 +89,14 @@ public class HoldDuationAccTestManager : MonoBehaviour
         _diffRecords.Clear();
         _testCount = 0;
         _totalDiff = 0f;
+    }
+
+    private void Log(string msg)
+    {
+        if (!needsLog)
+        {
+            return;
+        }
+        Debug.Log(msg);
     }
 }
