@@ -17,9 +17,9 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     [Header("Test Dynamic Parameters")] 
     [SerializeField] private float holdDurationInSec;
     [SerializeField] private float testMaxCount;
-    [Tooltip("デバイスの処理速度によって発生する微妙な遅延を調整するための値")]
-    [SerializeField] private float deviceDelayAdjustInSec;
     [SerializeField] private bool needsLog;
+    [Tooltip("閾値検知のための幅")]
+    [SerializeField] private float threshold;
 
     [SerializeField]
     private HoldEventReceiver holdEventReceiver;
@@ -36,6 +36,8 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     private float fixedTimer;
 
     private bool fixedLock;
+
+    private int index;
     
     private void Start()
     {
@@ -63,7 +65,13 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
             return;
         }
         fixedTimer += Time.fixedDeltaTime;
-        Log($"FixedTime: {fixedTimer} bit: {_isPressing}");
+        if (holdDurationInSec * (index + 1) - threshold <= fixedTimer &&
+            fixedTimer <= holdDurationInSec * (index + 1) + threshold)
+        {
+            _bitData[index] = _isPressing ? 1 : 0;
+            Log($"FixedTime: {fixedTimer} bit: {_isPressing}");
+            index++;
+        }
     }
 
     private void OnPointerDown(PointerEventData data)
@@ -89,6 +97,8 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         yield return new WaitForSeconds(holdDurationInSec * bitDataLength);
         _isDataReceiving = false;
         fixedLock = true;
+        fixedTimer = 0f;
+        index = 0;
         LogBitToInt();
     }
 
