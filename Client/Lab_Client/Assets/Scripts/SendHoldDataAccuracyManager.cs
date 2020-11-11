@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -18,6 +19,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     [SerializeField] private float testMaxCount;
     [Tooltip("デバイスの処理速度によって発生する微妙な遅延を調整するための値")]
     [SerializeField] private float deviceDelayAdjustInSec;
+    [SerializeField] private bool needsLog;
 
     [SerializeField]
     private HoldEventReceiver holdEventReceiver;
@@ -30,6 +32,10 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     /// データの受信中フラグ
     /// </summary>
     private bool _isDataReceiving;
+
+    private float fixedTimer;
+
+    private bool fixedLock;
     
     private void Start()
     {
@@ -50,15 +56,23 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         StartCoroutine(DataReceivingCoroutine());
     }
 
+    private void FixedUpdate()
+    {
+        if (fixedLock)
+        {
+            return;
+        }
+        fixedTimer += Time.fixedDeltaTime;
+        Log($"FixedTime: {fixedTimer} bit: {_isPressing}");
+    }
+
     private void OnPointerDown(PointerEventData data)
     {
-        Debug.Log("OnPointerDown");
         _isPressing = true;
     }
 
     private void OnPointerUp(PointerEventData data)
     {
-        Debug.Log("OnPointerUp");
         _isPressing = false;
     }
 
@@ -70,13 +84,11 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     {
         // データ送信開始タッチの後holdDurationInSec分待機時間が発生するためそれを待つ
         _isDataReceiving = true;
+        fixedLock = false;
         yield return new WaitForSeconds(holdDurationInSec);
-        for (var i = 0; i < bitDataLength; i++)
-        {
-            yield return new WaitForSeconds(holdDurationInSec);
-            _bitData[i] = _isPressing ? 1 : 0;
-        }
+        yield return new WaitForSeconds(holdDurationInSec * bitDataLength);
         _isDataReceiving = false;
+        fixedLock = true;
         LogBitToInt();
     }
 
@@ -88,5 +100,14 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
             num += _bitData[i] << i;
         }
         Debug.Log($"num: {num}");
+    }
+
+    private void Log(string msg)
+    {
+        if (!needsLog)
+        {
+            return;
+        }
+        Debug.Log(msg);
     }
 }
