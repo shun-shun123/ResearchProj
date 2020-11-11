@@ -66,7 +66,8 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         }
         fixedTimer += Time.fixedDeltaTime;
         if (holdDurationInSec * (index + 1) - threshold <= fixedTimer &&
-            fixedTimer <= holdDurationInSec * (index + 1) + threshold)
+            fixedTimer <= holdDurationInSec * (index + 1) + threshold && 
+            index < bitDataLength)
         {
             _bitData[index] = _isPressing ? 1 : 0;
             Log($"FixedTime: {fixedTimer} bit: {_isPressing}");
