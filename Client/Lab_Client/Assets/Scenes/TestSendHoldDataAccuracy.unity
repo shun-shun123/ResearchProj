@@ -540,7 +540,7 @@ MonoBehaviour:
   holdDurationInSec: 0.03
   testMaxCount: 0
   needsLog: 1
-  threshold: 0.003
+  threshold: 0.01
   holdEventReceiver: {fileID: 30995434}
 --- !u!1 &2059296740
 GameObject:
