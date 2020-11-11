@@ -46,7 +46,7 @@ public class HoldDuationAccTestManager : MonoBehaviour
             _totalDiff /= _testCount;
             Debug.Log($"Diff.Ave: {_totalDiff}");
             Debug.Log(GetAllLog());
-            _testCount = 0;
+            ResetAll();
         }
     }
 
@@ -59,5 +59,12 @@ public class HoldDuationAccTestManager : MonoBehaviour
         }
 
         return sb.ToString();
+    }
+
+    private void ResetAll()
+    {
+        _diffRecords.Clear();
+        _testCount = 0;
+        _totalDiff = 0f;
     }
 }
