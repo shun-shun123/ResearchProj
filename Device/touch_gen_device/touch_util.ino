@@ -59,7 +59,9 @@ void GenerateTouchDataFromBits(byte* bitArray, int touchDuration) {
 // holdDuration: ホールド時間(millis)
 void GenerateHoldDataFromBits(byte* bitArray, int holdDuration) {
   for (int i = 0; i < 10; i++) {
+    unsigned long startTime = millis();
     Hold(bitArray[i], holdDuration);
+    Logln(LOG, String(millis() - startTime));
   }
 }
 

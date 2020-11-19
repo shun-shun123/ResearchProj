@@ -156,7 +156,9 @@ void SendHoldDataAccuracyTest(int testMaxCount, int testDuration, int testWait) 
 // ホールド時間間隔がどれだけの精度で出ているかテストするメソッド（Unity必須）
 void TestHoldDurationAcc(int textMaxCount, int testDuration) {
   for (int i = 0; i < textMaxCount; i++) {
+    unsigned long startTime = millis();
     Hold(1, testDuration);
+    Logln(LOG, String(millis() - startTime));
     Hold(0, 100);  // 確実にタッチ離れを検知する時間間隔を設定しておく
   }
 }
