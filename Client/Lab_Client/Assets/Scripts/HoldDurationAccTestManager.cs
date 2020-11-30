@@ -107,8 +107,8 @@ public class HoldDurationAccTestManager : MonoBehaviour
     private void OnPointerUp(PointerEventData data)
     {
         _timerLock = true;
-        // _threadTimerが10未満は外れ値として除外する
-        if (_threadTimer < 10)
+        // _threadTimerが20未満は外れ値として除外する
+        if (_threadTimer < 20)
         {
             return;
         }
