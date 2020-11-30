@@ -51,12 +51,12 @@ public class HoldDurationAccTestManager : MonoBehaviour
     /// <summary>
     /// 一番短いと検知された時間
     /// </summary>
-    private int _shortest;
+    private int _shortest = int.MaxValue;
     
     /// <summary>
     /// 一番長いと検知された時間
     /// </summary>
-    private int _longest;
+    private int _longest = int.MinValue;
     
     private void Start()
     {
