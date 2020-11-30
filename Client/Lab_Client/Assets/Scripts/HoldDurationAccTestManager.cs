@@ -124,7 +124,7 @@ public class HoldDurationAccTestManager : MonoBehaviour
         _currentTestIter++;
         if (_currentTestIter == testCount)
         {
-            Debug.Log($"Average: {_totalTimer / (float)testCount}");
+            Debug.Log($"Average: {_totalTimer / (float)testCount}, Shortest: {_shortest}, Longest: {_longest}");
             ResetParams();
         }
     }
@@ -134,6 +134,8 @@ public class HoldDurationAccTestManager : MonoBehaviour
         _totalTimer = 0;
         _currentTestIter = 0;
         _threadTimer = 0;
+        _shortest = int.MaxValue;
+        _longest = int.MinValue;
         Debug.Log("Test Parameterのリセット完了");
     }
 }
