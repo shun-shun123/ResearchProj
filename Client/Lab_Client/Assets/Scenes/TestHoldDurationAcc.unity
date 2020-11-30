@@ -459,6 +459,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b692914c3f064d18a54dbaf8c2e74d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  testCount: 10
+  textHoldDuration: 50
   holdEventReceiver: {fileID: 821869024}
   threadTimerInMillis: 5
 --- !u!4 &1030474866
