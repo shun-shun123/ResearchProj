@@ -86,7 +86,7 @@ public class HoldDurationAccTestManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
-            _currentTestIter = 0;
+            ResetParams();
         }
     }
 
@@ -109,6 +109,15 @@ public class HoldDurationAccTestManager : MonoBehaviour
         if (_currentTestIter == testCount)
         {
             Debug.Log($"Average: {_totalTimer / (float)testCount}");
+            ResetParams();
         }
+    }
+
+    private void ResetParams()
+    {
+        _totalTimer = 0;
+        _currentTestIter = 0;
+        _threadTimer = 0;
+        Debug.Log("Test Parameterのリセット完了");
     }
 }
