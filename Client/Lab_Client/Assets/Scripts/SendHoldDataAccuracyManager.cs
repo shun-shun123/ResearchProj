@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
-using System.Text;
+using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -14,39 +15,47 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     [Tooltip("TargetFrameRate: 十分に高い値を設定すると良い")]
     [SerializeField] private int targetFrameRate;
 
-    [Header("Test Dynamic Parameters")] 
     [SerializeField] private float holdDurationInSec;
-    [SerializeField] private float testMaxCount;
-    [SerializeField] private bool needsLog;
-    [Tooltip("閾値検知のための幅")]
-    [SerializeField] private float threshold;
-    [Tooltip("デバイス遅延")]
-    [SerializeField] private float deviceDelay;
-    [SerializeField] private bool isTestMode;
+
+    /// <summary>
+    /// 別スレッドで走らせるタイマーのTick
+    /// </summary>
+    [SerializeField]
+    private double threadTimerInMillis;
 
     [SerializeField]
     private HoldEventReceiver holdEventReceiver;
     
     private int[] _bitData;
 
-    private bool _isPressing;
-
     /// <summary>
     /// データの受信中フラグ
     /// </summary>
     private bool _isDataReceiving;
 
-    private float fixedTimer;
+    /// <summary>
+    /// 別スレッドでカウントするタイマー
+    /// </summary>
+    private int _threadTimer;
 
-    private bool fixedLock;
+    private bool _timerLock;
+    
+    /// <summary>
+    /// マルチスレッドブロック
+    /// </summary>
+    private readonly object _lockObj = new object();
+    
+    /// <summary>
+    /// イベントデータを格納していくキュー
+    /// </summary>
+    private Queue<HoldEventRawData> eventDataQueue = new Queue<HoldEventRawData>();
 
-    private int index;
+    private HoldEventRawData.EventType _currentEventType = HoldEventRawData.EventType.Low;
 
-    private int testCount;
+    private int lastEventTime;
 
-    private int successCount;
-
-    private bool isEnterDetectRange;
+    private int releaseTime;
+    private int pressTime;
 
     private void Start()
     {
@@ -56,6 +65,29 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
 
         holdEventReceiver.OnPointerDownAction = OnPointerDown;
         holdEventReceiver.OnPointerUpAction = OnPointerUp;
+        
+        CounterStart();
+    }
+
+    /// <summary>
+    /// カウンターのスタート
+    /// </summary>
+    private void CounterStart()
+    {
+        Observable.Interval(TimeSpan.FromMilliseconds(threadTimerInMillis))
+            .ObserveOn(Scheduler.ThreadPool)
+            .Subscribe(_ =>
+            {
+                // ロック中はタイマーをカウントしない
+                if (_timerLock)
+                {
+                    return;
+                }
+                lock (_lockObj)
+                {
+                    _threadTimer += (int) threadTimerInMillis;
+                }
+            }).AddTo(gameObject);
     }
 
     public void OnClickReceivingButton()
@@ -64,39 +96,44 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         {
             return;
         }
+        _threadTimer = 0;
+        _timerLock = false;
+        pressTime = _threadTimer;
+        releaseTime = _threadTimer;
+        _currentEventType = HoldEventRawData.EventType.Low;
         StartCoroutine(DataReceivingCoroutine());
     }
-
-    private void FixedUpdate()
+    
+    private void OnPointerDown(PointerEventData data)
     {
-        if (fixedLock)
+        if (_currentEventType == HoldEventRawData.EventType.High || _isDataReceiving == false)
         {
             return;
         }
-        fixedTimer += Time.fixedDeltaTime;
-        // 入力開始想定時間 + (入力受付時間 / 4) ~ 入力終了想定時間 - (入力受付時間 / 4f)の間で入力値をチェックする
-        if (holdDurationInSec * (index + 1) + threshold + (index * deviceDelay) <= fixedTimer &&
-            fixedTimer <= holdDurationInSec * (index + 2) - threshold + (index * deviceDelay) && 
-            index < bitDataLength)
+        pressTime = _threadTimer;
+        _currentEventType = HoldEventRawData.EventType.High;
+        eventDataQueue.Enqueue(new HoldEventRawData
         {
-            isEnterDetectRange = true;
-            Log($"FixedTime: {fixedTimer} bit: {_isPressing}");
-        } else if (isEnterDetectRange)
-        {
-            _bitData[index] = _isPressing ? 1 : 0;
-            index++;
-            isEnterDetectRange = false;
-        }
-    }
-
-    private void OnPointerDown(PointerEventData data)
-    {
-        _isPressing = true;
+            StartAtInMillis = releaseTime,
+            EndAtInMillis = pressTime,
+            HoldEventType = HoldEventRawData.EventType.Low
+        });
     }
 
     private void OnPointerUp(PointerEventData data)
     {
-        _isPressing = false;
+        if (_currentEventType == HoldEventRawData.EventType.Low || _isDataReceiving == false)
+        {
+            return;
+        }
+        releaseTime = _threadTimer;
+        _currentEventType = HoldEventRawData.EventType.Low;
+        eventDataQueue.Enqueue(new HoldEventRawData
+        {
+            StartAtInMillis = pressTime,
+            EndAtInMillis = releaseTime,
+            HoldEventType = HoldEventRawData.EventType.High
+        });
     }
 
     /// <summary>
@@ -105,55 +142,34 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     /// </summary>
     private IEnumerator DataReceivingCoroutine()
     {
-        // データ送信開始タッチの後holdDurationInSec分待機時間が発生するためそれを待つ
         _isDataReceiving = true;
-        fixedLock = false;
-        yield return new WaitForSeconds(holdDurationInSec);
-        yield return new WaitForSeconds(holdDurationInSec * bitDataLength + deviceDelay * bitDataLength);
+        yield return new WaitForSeconds(holdDurationInSec * bitDataLength + 0.5f);
         _isDataReceiving = false;
-        fixedLock = true;
-        fixedTimer = 0f;
-        index = 0;
-        LogBitToInt();
-        if (isTestMode)
-        {
-            int read = BitToInt(_bitData);
-            successCount += read == testCount ? 1 : 0;
-            testCount++;
-            if (testCount >= testMaxCount)
-            {
-                Debug.Log($"Success: {successCount}");
-                Debug.Log($"TestCount: {testCount}");
-                Debug.Log($"ACC: {successCount / (float)testCount}");
-                testCount = 0;
-                successCount = 0;
-            }
-        }
+        PrintAllQueue();
     }
 
-    private int BitToInt(int[] bits)
+    private void PrintAllQueue()
     {
-        int num = 0;
-        for (var i = 0; i < bits.Length; i++)
+        foreach (var entry in eventDataQueue)
         {
-            num += bits[i] << i;
+            Debug.Log($"StartTime: {entry.StartAtInMillis}\nEndTime: {entry.EndAtInMillis}, Type: {entry.HoldEventType}");
         }
-
-        return num;
+        eventDataQueue.Clear();
     }
 
-    private void LogBitToInt()
+    public class HoldEventRawData
     {
-        int num = BitToInt(_bitData);
-        Debug.Log($"num: {num}");
-    }
+        public int StartAtInMillis;
+        public int EndAtInMillis;
+        public EventType HoldEventType;
 
-    private void Log(string msg)
-    {
-        if (!needsLog)
+        /// <summary>
+        /// イベントのタイプ
+        /// </summary>
+        public enum EventType
         {
-            return;
+            High,
+            Low,
         }
-        Debug.Log(msg);
     }
 }

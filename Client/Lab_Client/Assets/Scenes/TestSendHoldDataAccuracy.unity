@@ -538,10 +538,7 @@ MonoBehaviour:
   vSyncCount: 0
   targetFrameRate: 9999
   holdDurationInSec: 0.03
-  testMaxCount: 0
-  needsLog: 1
-  threshold: 0.01
-  deviceDelay: 0.003
+  threadTimerInMillis: 5
   holdEventReceiver: {fileID: 30995434}
 --- !u!1 &2059296740
 GameObject:
