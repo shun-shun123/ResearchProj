@@ -13,12 +13,6 @@ public class HoldDurationAccTestManager : MonoBehaviour
     /// </summary>
     [SerializeField]
     private int testCount;
-
-    /// <summary>
-    /// ホールド時間（理想）
-    /// </summary>
-    [SerializeField]
-    private int textHoldDuration;
     
     [SerializeField]
     private HoldEventReceiver holdEventReceiver;
