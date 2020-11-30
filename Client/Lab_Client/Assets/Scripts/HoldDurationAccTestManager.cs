@@ -53,6 +53,16 @@ public class HoldDurationAccTestManager : MonoBehaviour
     /// タイマーの合計（平均を出力するために使う）
     /// </summary>
     private int _totalTimer;
+
+    /// <summary>
+    /// 一番短いと検知された時間
+    /// </summary>
+    private int _shortest;
+    
+    /// <summary>
+    /// 一番長いと検知された時間
+    /// </summary>
+    private int _longest;
     
     private void Start()
     {
@@ -94,7 +104,6 @@ public class HoldDurationAccTestManager : MonoBehaviour
     {
         // タイマーロックを解除してカウンターを0にする
         _timerLock = false;
-        _currentTestIter++;
         lock (_lockObj)
         {
             _threadTimer = 0;
@@ -104,8 +113,15 @@ public class HoldDurationAccTestManager : MonoBehaviour
     private void OnPointerUp(PointerEventData data)
     {
         _timerLock = true;
+        // _threadTimerが10未満は外れ値として除外する
+        if (_threadTimer < 10)
+        {
+            return;
+        }
         _totalTimer += _threadTimer;
-        Debug.Log($"HoldDuration: {_threadTimer}");
+        _shortest = Mathf.Min(_threadTimer, _shortest);
+        _longest = Mathf.Max(_threadTimer, _longest);
+        _currentTestIter++;
         if (_currentTestIter == testCount)
         {
             Debug.Log($"Average: {_totalTimer / (float)testCount}");
