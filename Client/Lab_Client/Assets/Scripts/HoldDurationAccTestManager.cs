@@ -24,6 +24,12 @@ public class HoldDurationAccTestManager : MonoBehaviour
     private double threadTimerInMillis;
 
     /// <summary>
+    /// ディスプレイのスキャンレートを設定する
+    /// これ以下のホールド時間は捨てる
+    /// </summary>
+    private const int SCAN_RATE = 20;
+
+    /// <summary>
     /// 非同期でカウントするタイマー
     /// </summary>
     private int _threadTimer;
@@ -107,8 +113,8 @@ public class HoldDurationAccTestManager : MonoBehaviour
     private void OnPointerUp(PointerEventData data)
     {
         _timerLock = true;
-        // _threadTimerが20未満は外れ値として除外する
-        if (_threadTimer < 20)
+        // _threadTimerがスキャンレート未満は外れ値として除外する
+        if (_threadTimer <= SCAN_RATE)
         {
             return;
         }
