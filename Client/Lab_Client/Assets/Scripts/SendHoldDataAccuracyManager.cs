@@ -149,6 +149,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         _isDataReceiving = false;
         PrintAllQueue();
         DecodeHoldEventRawDataListToBits(eventDataList);
+        eventDataList.Clear();
     }
 
     private void PrintAllQueue()
@@ -157,7 +158,6 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         {
             Debug.Log($"StartTime: {entry.StartAtInMillis}\nEndTime: {entry.EndAtInMillis}, Type: {entry.HoldEventType}");
         }
-        eventDataList.Clear();
     }
 
     private void DecodeHoldEventRawDataListToBits(List<HoldEventRawData> data)
@@ -168,10 +168,11 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
             int duration = d.EndAtInMillis - d.StartAtInMillis;
             var type = d.HoldEventType;
             int length = duration / holdDurationInMillis;
+            Debug.Log($"{d.EndAtInMillis} - {d.StartAtInMillis} / {holdDurationInMillis} = {length}");
             length += (duration % holdDurationInMillis) <= 20 ? 0 : 1;
             for (var i = 0; i < length; i++)
             {
-                if (_bitData.Length < index)
+                if (index < _bitData.Length)
                 {
                     _bitData[index] = type == HoldEventRawData.EventType.High ? 1 : 0;
                     index++;
