@@ -27,7 +27,7 @@ void Touch(int touchCount, int touchDuration) {
 void Hold(int bitData, int holdDuration) {
   if (bitData == 0) {
     digitalWrite(TOUCH_PIN, LOW);
-    CustomDelayInMs(holdDuration);
+    CustomDelayInMs(holdDuration + 40);
   } else if (bitData == 1) {
     digitalWrite(TOUCH_PIN, HIGH);
     CustomDelayInMs(holdDuration);
@@ -63,6 +63,7 @@ void GenerateHoldDataFromBits(byte* bitArray, int holdDuration) {
     Hold(bitArray[i], holdDuration);
     Logln(LOG, String(millis() - startTime));
   }
+  digitalWrite(TOUCH_PIN, LOW);
 }
 
 // 受信側にタッチデータを送信するメソッド

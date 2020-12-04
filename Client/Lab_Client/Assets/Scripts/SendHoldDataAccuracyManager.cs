@@ -200,6 +200,11 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
             }
         }
 
+        for (; index < _bitData.Length; index++)
+        {
+            _bitData[index] = 0;
+        }
+
         int value = 0;
         for (var i = 0; i < _bitData.Length; i++)
         {
