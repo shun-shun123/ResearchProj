@@ -537,7 +537,7 @@ MonoBehaviour:
   bitDataLength: 10
   vSyncCount: 0
   targetFrameRate: 9999
-  holdDurationInSec: 0.03
+  holdDurationInMillis: 100
   threadTimerInMillis: 5
   holdEventReceiver: {fileID: 30995434}
 --- !u!1 &2059296740

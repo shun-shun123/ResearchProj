@@ -15,7 +15,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     [Tooltip("TargetFrameRate: 十分に高い値を設定すると良い")]
     [SerializeField] private int targetFrameRate;
 
-    [SerializeField] private float holdDurationInSec;
+    [SerializeField] private int holdDurationInMillis;
 
     /// <summary>
     /// 別スレッドで走らせるタイマーのTick
@@ -25,8 +25,10 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
 
     [SerializeField]
     private HoldEventReceiver holdEventReceiver;
+
+    private static readonly int DataSize = 10;
     
-    private int[] _bitData;
+    private int[] _bitData = new int[DataSize];
 
     /// <summary>
     /// データの受信中フラグ
@@ -48,7 +50,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     /// <summary>
     /// イベントデータを格納していくキュー
     /// </summary>
-    private Queue<HoldEventRawData> eventDataQueue = new Queue<HoldEventRawData>();
+    private List<HoldEventRawData> eventDataList = new List<HoldEventRawData>();
 
     private HoldEventRawData.EventType _currentEventType = HoldEventRawData.EventType.Low;
 
@@ -112,7 +114,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         }
         pressTime = _threadTimer;
         _currentEventType = HoldEventRawData.EventType.High;
-        eventDataQueue.Enqueue(new HoldEventRawData
+        eventDataList.Add(new HoldEventRawData
         {
             StartAtInMillis = releaseTime,
             EndAtInMillis = pressTime,
@@ -128,7 +130,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         }
         releaseTime = _threadTimer;
         _currentEventType = HoldEventRawData.EventType.Low;
-        eventDataQueue.Enqueue(new HoldEventRawData
+        eventDataList.Add(new HoldEventRawData
         {
             StartAtInMillis = pressTime,
             EndAtInMillis = releaseTime,
@@ -143,18 +145,46 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     private IEnumerator DataReceivingCoroutine()
     {
         _isDataReceiving = true;
-        yield return new WaitForSeconds(holdDurationInSec * bitDataLength + 0.5f);
+        yield return new WaitForSeconds(holdDurationInMillis / 1000.0f * bitDataLength + 0.5f);
         _isDataReceiving = false;
         PrintAllQueue();
+        DecodeHoldEventRawDataListToBits(eventDataList);
     }
 
     private void PrintAllQueue()
     {
-        foreach (var entry in eventDataQueue)
+        foreach (var entry in eventDataList)
         {
             Debug.Log($"StartTime: {entry.StartAtInMillis}\nEndTime: {entry.EndAtInMillis}, Type: {entry.HoldEventType}");
         }
-        eventDataQueue.Clear();
+        eventDataList.Clear();
+    }
+
+    private void DecodeHoldEventRawDataListToBits(List<HoldEventRawData> data)
+    {
+        int index = 0;
+        foreach (var d in data)
+        {
+            int duration = d.EndAtInMillis - d.StartAtInMillis;
+            var type = d.HoldEventType;
+            int length = duration / holdDurationInMillis;
+            length += (duration % holdDurationInMillis) <= 20 ? 0 : 1;
+            for (var i = 0; i < length; i++)
+            {
+                if (_bitData.Length < index)
+                {
+                    _bitData[index] = type == HoldEventRawData.EventType.High ? 1 : 0;
+                    index++;
+                }
+            }
+        }
+
+        string log = "";
+        foreach (var bit in _bitData)
+        {
+            log += bit;
+        }
+        Debug.Log($"DecodeBits: {log}");
     }
 
     public class HoldEventRawData
