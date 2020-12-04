@@ -34,6 +34,12 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     private int missRange;
 
     /// <summary>
+    /// 最初のタッチを待つための時間
+    /// </summary>
+    [SerializeField]
+    private float touchWaitInSeconds;
+
+    /// <summary>
     /// 2進数で表示する数字
     /// </summary>
     [SerializeField]
@@ -162,7 +168,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         _threadTimer = 0;
         pressTime = _threadTimer;
         releaseTime = _threadTimer;
-        yield return new WaitForSeconds(holdDurationInMillis / 1000.0f);
+        yield return new WaitForSeconds(touchWaitInSeconds);
         _timerLock = false;
         _currentEventType = HoldEventRawData.EventType.Low;
         yield return new WaitForSeconds(holdDurationInMillis / 1000.0f * bitDataLength + 0.5f);

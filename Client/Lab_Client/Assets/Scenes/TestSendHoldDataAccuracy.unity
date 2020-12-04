@@ -697,6 +697,7 @@ MonoBehaviour:
   threadTimerInMillis: 5
   holdEventReceiver: {fileID: 30995434}
   missRange: 40
+  touchWaitInSeconds: 0.09
   bitText: {fileID: 921683627}
   digitText: {fileID: 774434386}
 --- !u!1 &2059296740
