@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BitTouchReceiveModule
 {
@@ -16,6 +17,19 @@ public class BitTouchReceiveModule
 
     private readonly MonoBehaviour _coroutineExecutor;
 
+    private Text bitText;
+
+    private Text digitText;
+
+    public BitTouchReceiveModule(MonoBehaviour mb, float touchDurationInSec, Action<int, int[]> onBitDataReceivedAction, Text bit, Text digit)
+    {
+        _coroutineExecutor = mb;
+        TouchDurationInSec = touchDurationInSec;
+        _onBitDataReceivedAction = onBitDataReceivedAction;
+        bitText = bit;
+        digitText = digit;
+    }
+    
     public BitTouchReceiveModule(MonoBehaviour mb, float touchDurationInSec, Action<int, int[]> onBitDataReceivedAction)
     {
         _coroutineExecutor = mb;
@@ -49,11 +63,17 @@ public class BitTouchReceiveModule
             _bitData[i] = _receiveHighBit ? 1 : 0;
             _receiveHighBit = false;
         }
+
+        bitText.text = "0000000000";
+        digitText.text = "0";
         int data = 0;
         for (var i = 0; i < _bitData.Length; i++)
         {
+            bitText.text += _bitData[i].ToString();
             data += _bitData[i] << i;
         }
+
+        digitText.text = data.ToString();
 
         _onBitDataReceivedAction(data, _bitData);
         yield return new WaitForSeconds(0.5f);

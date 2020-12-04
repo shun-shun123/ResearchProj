@@ -1,12 +1,19 @@
 ﻿using Model;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SendTouchDataAccuracyManager : MonoBehaviour
 {
     [SerializeField] private float touchDurationInSec;
     [SerializeField] private int testMaxCount;
     [SerializeField] private bool isSaveResult;
+
+    [SerializeField]
+    private Text bitText;
+
+    [SerializeField]
+    private Text digitText;
 
     private BitTouchReceiveModule _bitTouchReceiveModule;
 
@@ -20,7 +27,7 @@ public class SendTouchDataAccuracyManager : MonoBehaviour
     
     void Start()
     {
-        _bitTouchReceiveModule = new BitTouchReceiveModule(this, touchDurationInSec, OnBitDataReceivedAction);
+        _bitTouchReceiveModule = new BitTouchReceiveModule(this, touchDurationInSec, OnBitDataReceivedAction, bitText, digitText);
     }
 
     public void OnClickReceiveButton()

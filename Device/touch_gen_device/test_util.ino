@@ -149,7 +149,6 @@ void SendHoldDataAccuracyTest(int testMaxCount, int testDuration, int testWait) 
     // ビットデータ→ホールドデータ変換・送信
     SendHoldDataFromBits(bits, testDuration);
     delay(testWait);
-    Touch(1, testDuration);
   }
 }
 
