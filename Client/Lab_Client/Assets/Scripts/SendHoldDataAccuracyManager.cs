@@ -181,15 +181,13 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         foreach (var d in data)
         {
             int duration = d.EndAtInMillis - d.StartAtInMillis;
-            var type = d.HoldEventType;
-            int length = duration / holdDurationInMillis;
-            Debug.Log($"{d.EndAtInMillis} - {d.StartAtInMillis} / {holdDurationInMillis} = {length}");
-            length += (duration % holdDurationInMillis) <= 20 ? 0 : 1;
+            // 除算をしてとりあえず割れる分はlength, 剰余は長さによっては1bitの長さを付与することになる
+            int length = duration / holdDurationInMillis + (duration % holdDurationInMillis <= 20 ? 0 : 1);
             for (var i = 0; i < length; i++)
             {
                 if (index < _bitData.Length)
                 {
-                    _bitData[index] = type == HoldEventRawData.EventType.High ? 1 : 0;
+                    _bitData[index] = d.HoldEventType == HoldEventRawData.EventType.High ? 1 : 0;
                     index++;
                 }
             }
