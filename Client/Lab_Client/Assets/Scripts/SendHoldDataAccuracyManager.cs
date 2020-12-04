@@ -173,6 +173,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         _currentEventType = HoldEventRawData.EventType.Low;
         yield return new WaitForSeconds(holdDurationInMillis / 1000.0f * bitDataLength + 0.5f);
         _isDataReceiving = false;
+        _timerLock = true;
         PrintAllQueue();
         DecodeHoldEventRawDataListToBits(eventDataList);
         eventDataList.Clear();
