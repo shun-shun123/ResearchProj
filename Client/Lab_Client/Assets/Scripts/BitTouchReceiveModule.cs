@@ -64,7 +64,7 @@ public class BitTouchReceiveModule
             _receiveHighBit = false;
         }
 
-        bitText.text = "0000000000";
+        bitText.text = "";
         digitText.text = "0";
         int data = 0;
         for (var i = 0; i < _bitData.Length; i++)
