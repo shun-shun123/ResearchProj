@@ -117,11 +117,6 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         {
             return;
         }
-        _threadTimer = 0;
-        _timerLock = false;
-        pressTime = _threadTimer;
-        releaseTime = _threadTimer;
-        _currentEventType = HoldEventRawData.EventType.Low;
         StartCoroutine(DataReceivingCoroutine());
     }
     
@@ -164,6 +159,12 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     private IEnumerator DataReceivingCoroutine()
     {
         _isDataReceiving = true;
+        yield return new WaitForSeconds(holdDurationInMillis / 2000.0f);
+        _threadTimer = 0;
+        _timerLock = false;
+        pressTime = _threadTimer;
+        releaseTime = _threadTimer;
+        _currentEventType = HoldEventRawData.EventType.Low;
         yield return new WaitForSeconds(holdDurationInMillis / 1000.0f * bitDataLength + 0.5f);
         _isDataReceiving = false;
         PrintAllQueue();
