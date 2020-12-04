@@ -28,6 +28,12 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     private HoldEventReceiver holdEventReceiver;
 
     /// <summary>
+    /// +-のレンジ(millis)
+    /// </summary>
+    [SerializeField]
+    private int missRange;
+
+    /// <summary>
     /// 2進数で表示する数字
     /// </summary>
     [SerializeField]
@@ -182,7 +188,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
         {
             int duration = d.EndAtInMillis - d.StartAtInMillis;
             // 除算をしてとりあえず割れる分はlength, 剰余は長さによっては1bitの長さを付与することになる
-            int length = duration / holdDurationInMillis + (duration % holdDurationInMillis <= 20 ? 0 : 1);
+            int length = duration / holdDurationInMillis + (duration % holdDurationInMillis <= missRange ? 0 : 1);
             for (var i = 0; i < length; i++)
             {
                 if (index < _bitData.Length)
