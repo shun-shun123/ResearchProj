@@ -159,7 +159,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     private IEnumerator DataReceivingCoroutine()
     {
         _isDataReceiving = true;
-        yield return new WaitForSeconds(holdDurationInMillis / 2000.0f);
+        yield return new WaitForSeconds(holdDurationInMillis / 1000.0f);
         _threadTimer = 0;
         _timerLock = false;
         pressTime = _threadTimer;
