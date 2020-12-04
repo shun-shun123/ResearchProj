@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class SendHoldDataAccuracyManager : MonoBehaviour
 {
@@ -25,6 +26,18 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
 
     [SerializeField]
     private HoldEventReceiver holdEventReceiver;
+
+    /// <summary>
+    /// 2進数で表示する数字
+    /// </summary>
+    [SerializeField]
+    private Text bitText;
+
+    /// <summary>
+    /// 10進数で表示する数字
+    /// </summary>
+    [SerializeField]
+    private Text digitText;
 
     private static readonly int DataSize = 10;
     
@@ -162,6 +175,8 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
 
     private void DecodeHoldEventRawDataListToBits(List<HoldEventRawData> data)
     {
+        bitText.text = "";
+        digitText.text = "";
         int index = 0;
         foreach (var d in data)
         {
@@ -180,12 +195,14 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
             }
         }
 
-        string log = "";
-        foreach (var bit in _bitData)
+        int value = 0;
+        for (var i = 0; i < _bitData.Length; i++)
         {
-            log += bit;
+            value += _bitData[i] << i;
+            bitText.text += _bitData[i];
         }
-        Debug.Log($"DecodeBits: {log}");
+
+        digitText.text = value.ToString();
     }
 
     public class HoldEventRawData
