@@ -8,16 +8,16 @@
 void Touch(int touchCount, int touchDuration) {
   // タッチせずに1回分待機する場合の処理
   if (touchCount == 0) {
-    delay(touchDuration * 2);
+    CustomDelayInMs(touchDuration * 2);
     return;
   }
   
   // タッチ生成する場合の処理
   for (int i = 0; i < touchCount; i++) {
     digitalWrite(TOUCH_PIN, HIGH);
-    delay(touchDuration);
+    CustomDelayInMs(touchDuration);
     digitalWrite(TOUCH_PIN, LOW);
-    delay(touchDuration);
+    CustomDelayInMs(touchDuration);
   }
 }
 
@@ -27,7 +27,7 @@ void Touch(int touchCount, int touchDuration) {
 void Hold(int bitData, int holdDuration) {
   if (bitData == 0) {
     digitalWrite(TOUCH_PIN, LOW);
-    CustomDelayInMs(holdDuration + 40);
+    CustomDelayInMs(holdDuration);
   } else if (bitData == 1) {
     digitalWrite(TOUCH_PIN, HIGH);
     CustomDelayInMs(holdDuration);
@@ -61,7 +61,8 @@ void GenerateHoldDataFromBits(byte* bitArray, int holdDuration) {
   for (int i = 0; i < 10; i++) {
     unsigned long startTime = millis();
     Hold(bitArray[i], holdDuration);
-    Logln(LOG, String(millis() - startTime));
+    Logln(LOG, "Hold in " + String(millis() - startTime) + " [" + String(bitArray[i]) + "]");
+    Logln(LOG, "GlobalTimer: " + String(millis() - GlobalTimer));
   }
   digitalWrite(TOUCH_PIN, LOW);
 }
@@ -80,8 +81,11 @@ void SendTouchDataFromBits(byte* bitArray, int touchDuration) {
 // bitArray: ビットデータ配列[10]
 // holdDuration: ホールド間隔(milis)
 void SendHoldDataFromBits(byte* bitArray, int holdDuration) {
+  GlobalTimer = millis();
   // 送信開始タッチ
+  Logln(LOG, "SendStartTouch at " + String(millis()));
   Touch(1, holdDuration);
+  Logln(LOG, "SendStartTouch Finished at " + String(millis()));
   // ホールドデータ送信
   GenerateHoldDataFromBits(bitArray, holdDuration);
 }

@@ -37,12 +37,16 @@ const int TEST_SEND_HOLD_DATA = 108;
 // センサ値
 float sensorValue;
 
+// グローバル変数として定義したタイマー変数（うかつに使わないこと）
+unsigned int GlobalTimer = 0;
+
 void setup() {
   pinMode(TOUCH_PIN, OUTPUT);
   Serial.begin(9600);
 }
 
 void loop() {
+  /*
   delay(500);
   // センサ読み取り
   readSensorValue();
@@ -54,6 +58,7 @@ void loop() {
   byte holdBits[10];
   CopyIntToBitIntoArray(intValue, holdBits);
   SendHoldDataFromBits(holdBits, 100);
+  */
   
   // Serialポートに何バイトかデータが到着しているかを返すテスト回数
   if (Serial.available() <= 0) {
