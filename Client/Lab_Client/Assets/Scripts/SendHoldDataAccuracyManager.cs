@@ -51,6 +51,13 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     [SerializeField]
     private Text digitText;
 
+    /// <summary>
+    /// PointerUp/Downの状態を可視化するためのオブジェクト
+    /// OnPointerDown時にアクティブになり、OnPointerUp時に非アクティブになる
+    /// </summary>
+    [SerializeField]
+    private GameObject eventVisualizer;
+
     private static readonly int DataSize = 10;
     
     private int[] _bitData = new int[DataSize];
@@ -83,7 +90,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
 
     private int releaseTime;
     private int pressTime;
-
+    
     private void Start()
     {
         _bitData = new int[bitDataLength];
@@ -128,6 +135,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
     
     private void OnPointerDown(PointerEventData data)
     {
+        eventVisualizer.gameObject.SetActive(true);
         if (_currentEventType == HoldEventRawData.EventType.High || _isDataReceiving == false)
         {
             return;
@@ -144,6 +152,7 @@ public class SendHoldDataAccuracyManager : MonoBehaviour
 
     private void OnPointerUp(PointerEventData data)
     {
+        eventVisualizer.gameObject.SetActive(false);
         if (_currentEventType == HoldEventRawData.EventType.Low || _isDataReceiving == false)
         {
             return;
