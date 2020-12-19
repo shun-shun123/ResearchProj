@@ -31,8 +31,6 @@ void Hold(int bitData, int holdDuration) {
   } else if (bitData == 1) {
     digitalWrite(TOUCH_PIN, HIGH);
     CustomDelayInMs(holdDuration);
-  } else {
-    Logln(ERR, "bitが0,1以外で来ています: " + String(bitData));
   }
 }
 
@@ -62,7 +60,6 @@ void GenerateHoldDataFromBits(byte* bitArray, int holdDuration) {
     unsigned long startTime = millis();
     Hold(bitArray[i], holdDuration);
     Logln(LOG, "Hold in " + String(millis() - startTime) + " [" + String(bitArray[i]) + "]");
-    Logln(LOG, "GlobalTimer: " + String(millis() - GlobalTimer));
   }
   digitalWrite(TOUCH_PIN, LOW);
 }
@@ -81,11 +78,8 @@ void SendTouchDataFromBits(byte* bitArray, int touchDuration) {
 // bitArray: ビットデータ配列[10]
 // holdDuration: ホールド間隔(milis)
 void SendHoldDataFromBits(byte* bitArray, int holdDuration) {
-  GlobalTimer = millis();
   // 送信開始タッチ
-  Logln(LOG, "SendStartTouch at " + String(millis()));
   Touch(1, holdDuration);
-  Logln(LOG, "SendStartTouch Finished at " + String(millis()));
   // ホールドデータ送信
   GenerateHoldDataFromBits(bitArray, holdDuration);
 }
