@@ -43,19 +43,17 @@ void setup() {
 }
 
 void loop() {
-  /*
+  
   delay(500);
   // センサ読み取り
   readSensorValue();
-  int intValue = (int)sensorValue * 10;
-  if (intValue < 0) 
-    intValue = intValue * -1;
-  Logln(LOG, "intValue " + String(intValue));
+  Logln(LOG, "sensorValue " + String(sensorValue));
+  return;
 
   byte holdBits[10];
-  CopyIntToBitIntoArray(intValue, holdBits);
+  CopyIntToBitIntoArray(sensorValue, holdBits);
   SendHoldDataFromBits(holdBits, 100);
-  */
+  
 
   // Serialポートに何バイトかデータが到着しているかを返すテスト回数
   if (Serial.available() <= 0) {

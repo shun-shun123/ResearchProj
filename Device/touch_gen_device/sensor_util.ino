@@ -13,10 +13,10 @@ float offset_voltage = 2500.0;
 // 内部処理自体は外部からは意識せず任意のセンサ値読み出し関数を変えることで機能する
 void readSensorValue() {
   // 現状は3軸加速度センサからの値を読み出すように設定されている
-  read3AxisAcceleration();
+  // read3AxisAcceleration();
 
   // 下記のコメントを外すと読み取るセンサを変えることができる
-  // readTemparature();
+  readTemparature();
 }
 
 // 3軸加速度センサの値を読み取る
@@ -45,6 +45,7 @@ void read3AxisAcceleration() {
 
 // 温度センサの値を読み取る
 void readTemparature() {
-  // TODO: 実装予定
-  sensorValue = 0;
+  // https://www.denshi.club/cookbook/sensor/temp/l.html
+  int analogInput = analogRead(A0);
+  sensorValue = round(analogInput * (5.0 / 1023.0) * 100);
 }
