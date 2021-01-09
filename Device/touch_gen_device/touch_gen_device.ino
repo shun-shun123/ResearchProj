@@ -48,11 +48,12 @@ void loop() {
   // センサ読み取り
   readSensorValue();
   Logln(LOG, "sensorValue " + String(sensorValue));
-  return;
 
   byte holdBits[10];
-  CopyIntToBitIntoArray(sensorValue, holdBits);
-  SendHoldDataFromBits(holdBits, 100);
+  CopyIntToBitIntoArray((int)sensorValue, holdBits);
+  SendHoldDataFromBits(holdBits, 80);
+  delay(1000);
+  return;
   
 
   // Serialポートに何バイトかデータが到着しているかを返すテスト回数

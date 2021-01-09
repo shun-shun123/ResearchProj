@@ -27,7 +27,7 @@ void Touch(int touchCount, int touchDuration) {
 void Hold(int bitData, int holdDuration) {
   if (bitData == 0) {
     digitalWrite(TOUCH_PIN, LOW);
-    CustomDelayInMs(holdDuration + 10);
+    CustomDelayInMs(holdDuration + 25);
   } else if (bitData == 1) {
     digitalWrite(TOUCH_PIN, HIGH);
     CustomDelayInMs(holdDuration);

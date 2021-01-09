@@ -46,6 +46,6 @@ void read3AxisAcceleration() {
 // 温度センサの値を読み取る
 void readTemparature() {
   // https://www.denshi.club/cookbook/sensor/temp/l.html
-  int analogInput = analogRead(A0);
+  int analogInput = analogRead(0);
   sensorValue = round(analogInput * (5.0 / 1023.0) * 100);
 }
